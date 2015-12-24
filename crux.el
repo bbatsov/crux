@@ -1,4 +1,4 @@
-;;; crux --- A Collection of Ridiculously Useful eXtensions.
+;;; crux.el --- A Collection of Ridiculously Useful eXtensions.
 ;;
 ;; Copyright © 2015 Bozhidar Batsov
 ;;
