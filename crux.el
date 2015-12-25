@@ -64,6 +64,17 @@ With a prefix ARG always prompt for command to use."
   "The default `ansi-term' name used by `crux-visit-term-buffer'.
 This variable can be set via .dir-locals.el to provide multi-term support.")
 
+(defun crux-start-or-switch-to (function buffer-name)
+  "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
+Otherwise switch to the buffer named BUFFER-NAME.  Don't clobber
+the current buffer."
+  (if (not (get-buffer buffer-name))
+      (progn
+        (split-window-sensibly (selected-window))
+        (other-window 1)
+        (funcall function))
+    (switch-to-buffer-other-window buffer-name)))
+
 (defun crux-visit-term-buffer ()
   "Create or visit a terminal buffer."
   (interactive)
@@ -257,17 +268,6 @@ buffer is not visiting a file."
     (crux-find-alternate-file-as-root buffer-file-name)))
 
 (add-hook 'find-file-hook #'crux-reopen-as-root)
-
-(defun crux-start-or-switch-to (function buffer-name)
-  "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
-Otherwise switch to the buffer named BUFFER-NAME.  Don't clobber
-the current buffer."
-  (if (not (get-buffer buffer-name))
-      (progn
-        (split-window-sensibly (selected-window))
-        (other-window 1)
-        (funcall function))
-    (switch-to-buffer-other-window buffer-name)))
 
 (defun crux-insert-date ()
   "Insert a timestamp according to locale's date and time format."
