@@ -213,9 +213,9 @@ point reaches the beginning or end of the buffer, stop there."
 (defun crux-cleanup-buffer-or-region ()
   "Cleanup a region if selected, otherwise the whole buffer."
   (interactive)
-  (call-interactively 'untabify)
+  (call-interactively #'untabify)
   (unless (member major-mode crux-indent-sensitive-modes)
-    (call-interactively 'indent-region))
+    (call-interactively #'indent-region))
   (whitespace-cleanup))
 
 (defun crux-eval-and-replace ()
