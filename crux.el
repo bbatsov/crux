@@ -255,7 +255,8 @@ buffer is not visiting a file."
               (file-writable-p buffer-file-name)
               (crux-file-owned-by-user-p buffer-file-name))
     (crux-find-alternate-file-as-root buffer-file-name)))
-(add-hook 'find-file-hook 'crux-reopen-as-root)
+
+(add-hook 'find-file-hook #'crux-reopen-as-root)
 
 (defun crux-start-or-switch-to (function buffer-name)
   "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
