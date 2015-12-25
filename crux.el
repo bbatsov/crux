@@ -151,8 +151,7 @@ point reaches the beginning or end of the buffer, stop there."
     (indent-region (region-beginning) (region-end))))
 
 (defun crux-get-positions-of-line-or-region ()
-  "Return positions (beg . end) of the current line
-or region."
+  "Return positions (beg . end) of the current line or region."
   (let (beg end)
     (if (and mark-active (> (point) (mark)))
         (exchange-point-and-mark))
@@ -232,7 +231,7 @@ See `file-attributes' for more info."
          (user-uid)))
 
 (defun crux-find-alternate-file-as-root (filename)
-  "Wraps `find-alternate-file' with opening a file as root."
+  "Wraps `find-alternate-file' with opening FILENAME as root."
   (find-alternate-file (concat "/sudo:root@localhost:" filename)))
 
 (require 'ido)
