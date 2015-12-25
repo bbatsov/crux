@@ -37,6 +37,17 @@
 (require 'thingatpt)
 (require 'seq)
 
+(defgroup crux nil
+  "crux configuration."
+  :prefix "crux-"
+  :group 'convenience)
+
+(defcustom crux-indent-sensitive-modes
+  '(conf-mode coffee-mode haml-mode python-mode slim-mode yaml-mode)
+  "Modes for which auto-indenting is suppressed."
+  :type 'list
+  :group 'crux)
+
 (defun crux-open-with (arg)
   "Open visited file in default external program.
 When in dired mode, open file under the cursor.
