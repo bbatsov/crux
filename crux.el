@@ -255,7 +255,7 @@ buffer is not visiting a file."
   (interactive "P")
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:"
-                         (ido-read-file-name "Find file(as root): ")))
+                         (ido-read-file-name "Find file (as root): ")))
     (crux-find-alternate-file-as-root buffer-file-name)))
 
 (defun crux-reopen-as-root ()
