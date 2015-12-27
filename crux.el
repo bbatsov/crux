@@ -1,4 +1,4 @@
-;;; crux --- A Collection of Ridiculously Useful eXtensions -*- lexical-binding: t -*-
+;;; crux.el --- A Collection of Ridiculously Useful eXtensions -*- lexical-binding: t -*-
 ;;
 ;; Copyright © 2015 Bozhidar Batsov
 ;;
@@ -375,7 +375,7 @@ Doesn't mess with special buffers."
   (global-set-key (kbd "s-j") #'crux-top-join-line)
   (global-set-key (kbd "C-^") #'crux-top-join-line)
   (global-set-key (kbd "s-k") #'crux-kill-whole-line)
-  (global-set-key (kbd "C-<backspace>" #'crux-kill-line-backwards))
+  (global-set-key (kbd "C-<backspace>") #'crux-kill-line-backwards)
   (global-set-key (kbd "s-o") #'crux-smart-open-line-above)
   (global-set-key [remap kill-whole-line] #'crux-kill-whole-line))
 
