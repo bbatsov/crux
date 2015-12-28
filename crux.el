@@ -348,5 +348,16 @@ Doesn't mess with special buffers."
                            (t (error "Unknown shell")))))
     (find-file-other-window (expand-file-name shell-init-file (getenv "HOME")))))
 
+(defmacro crux-with-region-or-buffer (func)
+  "When called with no active region, call FUNC on current buffer.
+
+Use to make commands like `indent-region' work on both the region
+and the entire buffer (in the absense of a region)."
+  `(defadvice ,func (before with-region-or-buffer activate compile)
+     (interactive
+      (if mark-active
+          (list (region-beginning) (region-end))
+        (list (point-min) (point-max))))))
+
 (provide 'crux)
 ;;; crux.el ends here

@@ -61,6 +61,21 @@ Command                                     | Suggested Keybinding(s)         | 
 `crux-kill-whole-line`                      | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                  | <kbd>C-Backspace</kbd> | Kill line backwards
 
+## Using the bundled advices
+
+crux ships with some handy advises that can enhance the operation of existing commands. 
+
+### Make a function operate on a region or the entire buffer
+
+You can use `crux-with-region-or-buffer` to make a command acting
+normally on a region to operate on the entire buffer in the absense of
+a region. Here are a few examples you can stuff in your config:
+
+```el
+(crux-with-region-or-buffer indent-region)
+(crux-with-region-or-buffer untabify)
+```
+
 ## License
 
 Copyright © 2015 Bozhidar Batsov and [contributors][].
