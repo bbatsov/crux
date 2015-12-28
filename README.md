@@ -61,6 +61,17 @@ Command                                     | Suggested Keybinding(s)         | 
 `crux-kill-whole-line`                      | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                  | <kbd>C-Backspace</kbd> | Kill line backwards
 
+Here's how you'd bind some of the commands to keycombos:
+
+```el
+(global-set-key [remap move-beginning-of-line] #'crux-move-beginning-of-line)
+(global-set-key (kbd "C-c o") #'crux-open-with)
+(global-set-key [(shift return)] #'crux-smart-open-line)
+(global-set-key (kbd "s-r") #'crux-recentf-ido-find-file)
+(global-set-key (kbd "C-<backspace>" #'crux-kill-line-backwards))
+(global-set-key [remap kill-whole-line] #'crux-kill-whole-line)
+```
+
 ## Using the bundled advices
 
 crux ships with some handy advises that can enhance the operation of existing commands. 
