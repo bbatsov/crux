@@ -348,36 +348,5 @@ Doesn't mess with special buffers."
                            (t (error "Unknown shell")))))
     (find-file-other-window (expand-file-name shell-init-file (getenv "HOME")))))
 
-;;;###autoload
-(defun crux-setup-default-keybindings ()
-  "Set the recommended global keybindings for crux's commands."
-  (interactive)
-  (global-set-key [remap move-beginning-of-line] #'crux-move-beginning-of-line)
-  (global-set-key (kbd "C-c o") #'crux-open-with)
-  ;; mimic popular IDEs binding, note that it doesn't work in a terminal session
-  (global-set-key [(shift return)] #'crux-smart-open-line)
-  (global-set-key (kbd "M-o") #'crux-smart-open-line)
-  (global-set-key [(control shift return)] #'crux-smart-open-line-above)
-  (global-set-key (kbd "C-c n") #'crux-cleanup-buffer-or-region)
-  (global-set-key (kbd "C-c f")  #'crux-recentf-ido-find-file)
-  (global-set-key (kbd "C-M-z") #'crux-indent-defun)
-  (global-set-key (kbd "C-c u") #'crux-view-url)
-  (global-set-key (kbd "C-c e") #'crux-eval-and-replace)
-  (global-set-key (kbd "C-c s") #'crux-swap-windows)
-  (global-set-key (kbd "C-c D") #'crux-delete-file-and-buffer)
-  (global-set-key (kbd "C-c r") #'crux-rename-buffer-and-file)
-  (global-set-key (kbd "C-c t") #'crux-visit-term-buffer)
-  (global-set-key (kbd "C-c k") #'crux-kill-other-buffers)
-  (global-set-key (kbd "C-c TAB") #'crux-indent-rigidly-and-copy-to-clipboard)
-  (global-set-key (kbd "C-c I") #'crux-find-user-init-file)
-  (global-set-key (kbd "C-c S") #'crux-find-shell-init-file)
-  (global-set-key (kbd "s-r") #'crux-recentf-ido-find-file)
-  (global-set-key (kbd "s-j") #'crux-top-join-line)
-  (global-set-key (kbd "C-^") #'crux-top-join-line)
-  (global-set-key (kbd "s-k") #'crux-kill-whole-line)
-  (global-set-key (kbd "C-<backspace>" #'crux-kill-line-backwards))
-  (global-set-key (kbd "s-o") #'crux-smart-open-line-above)
-  (global-set-key [remap kill-whole-line] #'crux-kill-whole-line))
-
 (provide 'crux)
 ;;; crux.el ends here
