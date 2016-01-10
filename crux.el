@@ -239,7 +239,7 @@ point reaches the beginning or end of the buffer, stop there."
 (defun crux-recompile-init ()
   "Byte-compile all your dotfiles again."
   (interactive)
-  (byte-recompile-directory crux-dir 0))
+  (byte-recompile-directory user-emacs-directory 0))
 
 (defun crux-file-owner-uid (filename)
   "Return the UID of the FILENAME as an integer.
