@@ -48,6 +48,11 @@
   :type 'list
   :group 'crux)
 
+(defcustom crux-shell (getenv "SHELL")
+  "The default shell to run with `crux-visit-term-buffer'."
+  :type 'string
+  :group 'crux)
+
 (defun crux-open-with (arg)
   "Open visited file in default external program.
 When in dired mode, open file under the cursor.
