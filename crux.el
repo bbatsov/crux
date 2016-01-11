@@ -188,7 +188,7 @@ point reaches the beginning or end of the buffer, stop there."
     (setq end (line-end-position))
     (cons beg end)))
 
-(defun crux-rename-buffer-and-file ()
+(defun crux-rename-file-and-buffer ()
   "Rename current buffer and if the buffer is visiting a file, rename it too."
   (interactive)
   (let ((filename (buffer-file-name)))
@@ -201,6 +201,8 @@ point reaches the beginning or end of the buffer, stop there."
           (rename-file filename new-name t)
           (set-visited-file-name new-name t t)))))))
 
+(defalias 'crux-rename-buffer-and-file #'crux-rename-file-and-buffer)
+
 (defun crux-delete-file-and-buffer ()
   "Kill the current buffer and deletes the file it is visiting."
   (interactive)
@@ -212,6 +214,8 @@ point reaches the beginning or end of the buffer, stop there."
           (delete-file filename delete-by-moving-to-trash)
           (message "Deleted file %s" filename)
           (kill-buffer))))))
+
+(defalias 'crux-delete-buffer-and-file #'crux-delete-file-and-buffer)
 
 (defun crux-view-url ()
   "Open a new buffer containing the contents of URL."
