@@ -340,7 +340,7 @@ Doesn't mess with special buffers."
 
 (defun crux-find-user-init-file ()
   "Edit the `user-init-file', in another window."
-  (interactive "P")
+  (interactive)
   (find-file-other-window user-init-file))
 
 (defun crux-find-shell-init-file ()
