@@ -60,6 +60,7 @@ Command                                     | Suggested Keybinding(s)         | 
 `crux-top-join-lines`                       | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                      | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                  | <kbd>C-Backspace</kbd> | Kill line backwards
+`crux-ispell-word-then-abbrev`              | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`. 
 
 Here's how you'd bind some of the commands to keycombos:
 
@@ -70,6 +71,13 @@ Here's how you'd bind some of the commands to keycombos:
 (global-set-key (kbd "s-r") #'crux-recentf-ido-find-file)
 (global-set-key (kbd "C-<backspace>" #'crux-kill-line-backwards))
 (global-set-key [remap kill-whole-line] #'crux-kill-whole-line)
+```
+
+For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add this to your config:
+
+```el
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
 ```
 
 ## Using the bundled advices
