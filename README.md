@@ -60,7 +60,7 @@ Command                                     | Suggested Keybinding(s)         | 
 `crux-top-join-lines`                       | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                      | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                  | <kbd>C-Backspace</kbd> | Kill line backwards
-`crux-ispell-word-then-abbrev`              | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`. 
+`crux-ispell-word-then-abbrev`              | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
 
 Here's how you'd bind some of the commands to keycombos:
 
@@ -82,7 +82,7 @@ For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add 
 
 ## Using the bundled advices
 
-crux ships with some handy advises that can enhance the operation of existing commands. 
+crux ships with some handy advises that can enhance the operation of existing commands.
 
 ### Make a function operate on a region or the entire buffer
 
@@ -107,6 +107,6 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [melpa-package]: http://melpa.org/#/crux
 [melpa-stable-package]: http://stable.melpa.org/#/crux
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
-[contributors]: https://github.com/clojure-emacs/crux/contributors
+[contributors]: https://github.com/bbatsov/crux/contributors
 [melpa]: http://melpa.org
 [melpa stable]: http://stable.melpa.org
