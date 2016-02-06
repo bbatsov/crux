@@ -350,6 +350,9 @@ Doesn't mess with special buffers."
          (shell-init-file (cond
                            ((string= "zsh" shell) ".zshrc")
                            ((string= "bash" shell) ".bashrc")
+                           ((string= "tcsh" shell) ".login")
+                           ((string= "fish" shell) ".config/fish/config.fish")
+                           ((string-prefix-p "ksh" shell) ".profile")
                            (t (error "Unknown shell")))))
     (find-file-other-window (expand-file-name shell-init-file (getenv "HOME")))))
 
