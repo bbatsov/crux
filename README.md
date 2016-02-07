@@ -54,6 +54,7 @@ Command                                     | Suggested Keybinding(s)         | 
 `crux-rename-file-and-buffer`               | <kbd>C-c r</kbd> | Rename the current buffer and its visiting file if any.
 `crux-visit-term-buffer`                    | <kbd>C-c t</kbd> | Open a terminal emulator (`ansi-term`).
 `crux-kill-other-buffers`                   | <kbd>C-c k</kbd> | Kill all open buffers except the one you're currently in.
+`crux-indent-defun`                         | <kbd>C-M z</kbd> | Indent the definition at point.
 `crux-indent-rigidly-and-copy-to-clipboard` | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
 `crux-find-user-init-file`                  | <kbd>C-c I</kbd> | Open user's init file.
 `crux-find-shell-init-file`                 | <kbd>C-c S</kbd> | Open shell's init file.
