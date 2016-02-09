@@ -141,7 +141,7 @@ Passes ARG to command `kill-whole-line' when provided."
   (kill-whole-line arg)
   (back-to-indentation))
 
-(defun crux-kill-like-backwards ()
+(defun crux-kill-line-backwards ()
   "Kill line backwards and adjust the indentation."
   (interactive)
   (kill-line 0)
