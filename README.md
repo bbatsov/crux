@@ -85,15 +85,33 @@ For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add 
 
 crux ships with some handy advises that can enhance the operation of existing commands.
 
-### Make a function operate on a region or the entire buffer
+#### `(crux-with-region-or-buffer)` ####
 
 You can use `crux-with-region-or-buffer` to make a command acting
-normally on a region to operate on the entire buffer in the absense of
+normally on a region to operate on the entire buffer in the absence of
 a region. Here are a few examples you can stuff in your config:
 
 ```el
 (crux-with-region-or-buffer indent-region)
 (crux-with-region-or-buffer untabify)
+```
+
+#### `(crux-with-region-or-line)` ####
+
+Likewise, you can use `crux-with-region-or-line` to make a command
+alternately act on the current line if the mark is not active:
+
+```el
+(crux-with-region-or-line comment-or-uncomment-region)
+```
+
+#### `(crux-with-region-or-point-to-eol)` ####
+
+Sometimes you might want to act on the point until the end of the
+current line, rather than the whole line, in the absence of a region:
+
+``` el
+(crux-with-region-or-point-to-eol kill-ring-save)
 ```
 
 ## License
