@@ -53,6 +53,31 @@
   :type 'string
   :group 'crux)
 
+(defcustom crux-shell-zsh-init-files '("$HOME/.zshrc" "$HOME/.zlogin" "$HOME/.zprofile" "$HOME/.zshenv" "$HOME/.zlogout" "/etc/zshenv" "/etc/zprofile" "/etc/zshrc" "/etc/zlogin" "/etc/zlogout" "$ZDOTDIR/.zshrc" "$ZDOTDIR/.zlogin" "$ZDOTDIR/.zprofile" "$ZDOTIR/.zshenv" "$ZDOTDIR/.zlogout")
+  "The default init files of zsh."
+  :type 'list
+  :group 'crux)
+
+(defcustom crux-shell-bash-init-files '("$BASH_ENV" "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.bash_login" "$HOME/.profile" "$HOME/.bash_logout" "/etc/bashrc" "/etc/bash_profile" "/etc/bash_login" "/etc/profile" "/etc/bash_logout")
+  "The default init files of bash."
+  :type 'list
+  :group 'crux)
+
+(defcustom crux-shell-tcsh-init-files '("$HOME/.login" "$HOME/.cshrc" "$HOME/.tcshrc" "$HOME/.logout" "/etc/csh.cshrc" "/etc/csh.login" "/etc/csh.logout")
+  "The default init files of tcsh."
+  :type 'list
+  :group 'crux)
+
+(defcustom crux-shell-fish-init-files '("$HOME/.config/fish/config.fish" "$XDG_CONFIG_HOME/fish/config.fish")
+  "The default init files of fish."
+  :type 'list
+  :group 'crux)
+
+(defcustom crux-shell-ksh-init-files '("$HOME/.profile" "$ENV" "/etc/profile")
+  "The default init files of ksh."
+  :type 'list
+  :group 'crux)
+
 (defun crux-open-with (arg)
   "Open visited file in default external program.
 When in dired mode, open file under the cursor.
@@ -95,8 +120,8 @@ the current buffer."
   "Create or visit a terminal buffer."
   (interactive)
   (crux-start-or-switch-to (lambda ()
-                                (ansi-term crux-shell (concat crux-term-buffer-name "-term")))
-                              (format "*%s-term*" crux-term-buffer-name)))
+                             (ansi-term crux-shell (concat crux-term-buffer-name "-term")))
+                           (format "*%s-term*" crux-term-buffer-name)))
 
 (defun crux-indent-rigidly-and-copy-to-clipboard (begin end arg)
   "Indent region between BEGIN and END by ARG columns and copy to clipboard."
@@ -352,13 +377,16 @@ Doesn't mess with special buffers."
   (interactive)
   (let* ((shell (car (reverse (split-string (getenv "SHELL") "/" t))))
          (shell-init-file (cond
-                           ((string= "zsh" shell) ".zshrc")
-                           ((string= "bash" shell) ".bashrc")
-                           ((string= "tcsh" shell) ".login")
-                           ((string= "fish" shell) ".config/fish/config.fish")
-                           ((string-prefix-p "ksh" shell) ".profile")
-                           (t (error "Unknown shell")))))
-    (find-file-other-window (expand-file-name shell-init-file (getenv "HOME")))))
+                           ((string= "zsh" shell) crux-shell-zsh-init-files)
+                           ((string= "bash" shell) crux-shell-bash-init-files)
+                           ((string= "tcsh" shell) crux-shell-tcsh-init-files)
+                           ((string= "fish" shell) crux-shell-fish-init-files)
+                           ((string-prefix-p "ksh" shell) crux-shell-ksh-init-files)
+                           (t (error "Unknown shell"))))
+         (candidates (cl-remove-if-not 'file-exists-p (mapcar 'substitute-in-file-name shell-init-file))))
+    (if (> (length candidates) 1)
+        (find-file-other-window (completing-read "Choose shell init file:" candidates))
+      (find-file-other-window (car candidates)))))
 
 ;; http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html
 (defun crux-ispell-word-then-abbrev (p)
