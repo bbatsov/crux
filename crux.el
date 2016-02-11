@@ -36,6 +36,7 @@
 
 (require 'thingatpt)
 (require 'seq)
+(require 'tramp)
 
 (defgroup crux nil
   "crux configuration."
