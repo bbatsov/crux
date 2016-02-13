@@ -346,6 +346,22 @@ buffer is not visiting a file."
       (set-window-start w2 s1)))
   (other-window 1))
 
+;; modified from https://www.emacswiki.org/emacs/TransposeWindows
+(defun crux-transpose-windows (arg)
+  "Transpose the buffers shown in two windows.
+Prefix ARG determines if the current windows buffer is swapped
+with the next or previous window, and the number of
+transpositions to execute in sequence."
+  (interactive "p")
+  (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+    (while (/= arg 0)
+      (let ((this-win (window-buffer))
+            (next-win (window-buffer (funcall selector))))
+        (set-window-buffer (selected-window) next-win)
+        (set-window-buffer (funcall selector) this-win)
+        (select-window (funcall selector)))
+      (setq arg (if (cl-plusp arg) (1- arg) (1+ arg))))))
+
 (defun crux-switch-to-previous-buffer ()
   "Switch to previously open buffer.
 Repeated invocations toggle between the two most recently open buffers."
