@@ -49,7 +49,6 @@ Command                                     | Suggested Keybinding(s)         | 
 `crux-recentf-ido-find-file`                | <kbd>C-c f</kbd> or <kbd>Super-r</kbd> | Open recently visited file.
 `crux-view-url`                             | <kbd>C-c u</kbd> | Open a new buffer containing the contents of URL.
 `crux-eval-and-replace`                     | <kbd>C-c e</kbd> | Eval a bit of Emacs Lisp code and replace it with its result.
-`crux-swap-windows`                         | <kbd>C-c s</kbd> | Swap two active windows.
 `crux-tranpose-windows`                     | <kbd>C-x 4 t</kbd> | Transpose the buffers between two windows.
 `crux-delete-file-and-buffer`               | <kbd>C-c D</kbd> | Delete current file and buffer.
 `crux-rename-file-and-buffer`               | <kbd>C-c r</kbd> | Rename the current buffer and its visiting file if any.
