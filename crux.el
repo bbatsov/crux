@@ -444,9 +444,12 @@ and the entire buffer (in the absense of a region)."
       (what-line)
       (list beg end))))
 
-(defmacro me//with-region-or-line (func)
-  "When called with no active region, call FUNC on current line."
-  (advice-add func :filter-args #'crux--ad-with-region-or-line))
+(defmacro crux-with-region-or-line (func &optional remove)
+  "When called with no active region, call FUNC on current line.
+If REMOVE is non-nil, remove such advice"
+  (if remove
+      (advice-remove func #'crux--ad-with-region-or-line)
+    (advice-add func :filter-args #'crux--ad-with-region-or-line)))
 
 (defmacro crux-with-region-or-point-to-eol (func)
   "When called with no active region, call FUNC from the point to the end of line."
