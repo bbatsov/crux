@@ -434,13 +434,19 @@ and the entire buffer (in the absense of a region)."
           (list (region-beginning) (region-end))
         (list (point-min) (point-max))))))
 
-(defmacro crux-with-region-or-line (func)
+(defun crux--ad-with-region-or-line (&rest args)
+  "Operate on current line if no region is active by filtering ARGS."
+  (if (use-region-p)
+      (list (region-beginning) (region-end))
+    (let ((beg (+ (line-beginning-position) (current-indentation)))
+          (end (1- (line-beginning-position 2))))
+      (push-mark)
+      (what-line)
+      (list beg end))))
+
+(defmacro me//with-region-or-line (func)
   "When called with no active region, call FUNC on current line."
-  `(defadvice ,func (before with-region-or-line activate compile)
-     (interactive
-      (if mark-active
-          (list (region-beginning) (region-end))
-        (list (line-beginning-position) (line-beginning-position 2))))))
+  (advice-add func :filter-args #'crux--ad-with-region-or-line))
 
 (defmacro crux-with-region-or-point-to-eol (func)
   "When called with no active region, call FUNC from the point to the end of line."
