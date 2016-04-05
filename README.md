@@ -114,6 +114,14 @@ current line, rather than the whole line, in the absence of a region:
 (crux-with-region-or-point-to-eol kill-ring-save)
 ```
 
+## Minor modes
+
+#### `(crux-reopen-as-root-mode)` ####
+
+Crux provides a `crux-reopen-as-root` command for reopening a file as
+root. This global minor mode changes `find-file` so all root files are
+automatically opened as root.
+
 ## License
 
 Copyright © 2015 Bozhidar Batsov and [contributors][].
