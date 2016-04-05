@@ -136,12 +136,24 @@ the current buffer."
 
 (defun crux-smart-open-line-above ()
   "Insert an empty line above the current line.
-Position the cursor at it's beginning, according to the current mode."
+Position the cursor at its beginning, according to the current mode."
   (interactive)
   (move-beginning-of-line nil)
-  (newline-and-indent)
-  (forward-line -1)
-  (indent-according-to-mode))
+  (insert "\n")
+  (if electric-indent-inhibit
+      ;; We can't use `indent-according-to-mode' in languages like Python,
+      ;; as there are multiple possible indentations with different meanings.
+      (let* ((indent-end (progn (back-to-indentation) (point)))
+             (indent-start (progn (move-beginning-of-line nil) (point)))
+             (indent-chars (buffer-substring indent-start indent-end)))
+        (forward-line -1)
+        ;; This new line should be indented with the same characters as
+        ;; the current line.
+        (insert indent-chars))
+    ;; Just use the current major-mode's indent facility.
+    (progn
+      (forward-line -1)
+      (indent-according-to-mode))))
 
 (defun crux-smart-open-line (arg)
   "Insert an empty line after the current line.
