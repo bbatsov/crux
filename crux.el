@@ -232,7 +232,9 @@ point reaches the beginning or end of the buffer, stop there."
   (let ((filename (buffer-file-name)))
     (if (not (and filename (file-exists-p filename)))
         (rename-buffer (read-from-minibuffer "New name: " (buffer-name)))
-      (let ((new-name (read-from-minibuffer "New name: " filename)))
+      (let* ((new-name (read-from-minibuffer "New name: " filename))
+             (containing-dir (file-name-directory new-name)))
+        (make-directory containing-dir t)
         (cond
          ((vc-backend filename) (vc-rename-file filename new-name))
          (t
