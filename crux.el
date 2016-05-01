@@ -1,4 +1,4 @@
-;;; crux --- A Collection of Ridiculously Useful eXtensions -*- lexical-binding: t -*-
+;;; crux.el --- A Collection of Ridiculously Useful eXtensions -*- lexical-binding: t -*-
 ;;
 ;; Copyright © 2015-2016 Bozhidar Batsov
 ;;
