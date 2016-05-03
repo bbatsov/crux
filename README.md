@@ -40,28 +40,30 @@ crux doesn't setup any keybindings for its commands out-of-the-box.
 Here's the list of some suggested keybindings. Feel free to bind
 individual commands to whatever keybindings you prefer.
 
-Command                                     | Suggested Keybinding(s)         | Description
---------------------------------------------|---------------------------------|------------------------
-`crux-open-with`                            | <kbd>C-c o</kbd>   | Open the currently visited file with an external program.
-`crux-smart-open-line-above`                | <kbd>C-S-RET</kbd> or <kbd>Super-o</kbd> | Insert an empty line above the current line and indent it properly.
-`crux-smart-open-line`                      | <kbd>S-RET</kbd> or <kbd>M-o</kbd> | Insert an empty line and indent it properly (as in most IDEs).
-`crux-cleanup-buffer-or-region`             | <kbd>C-c n</kbd> | Fix indentation in buffer and strip whitespace.
-`crux-recentf-ido-find-file`                | <kbd>C-c f</kbd> or <kbd>Super-r</kbd> | Open recently visited file.
-`crux-view-url`                             | <kbd>C-c u</kbd> | Open a new buffer containing the contents of URL.
-`crux-eval-and-replace`                     | <kbd>C-c e</kbd> | Eval a bit of Emacs Lisp code and replace it with its result.
-`crux-transpose-windows`                    | <kbd>C-x 4 t</kbd> | Transpose the buffers between two windows.
-`crux-delete-file-and-buffer`               | <kbd>C-c D</kbd> | Delete current file and buffer.
-`crux-rename-file-and-buffer`               | <kbd>C-c r</kbd> | Rename the current buffer and its visiting file if any.
-`crux-visit-term-buffer`                    | <kbd>C-c t</kbd> | Open a terminal emulator (`ansi-term`).
-`crux-kill-other-buffers`                   | <kbd>C-c k</kbd> | Kill all open buffers except the one you're currently in.
-`crux-indent-defun`                         | <kbd>C-M z</kbd> | Indent the definition at point.
-`crux-indent-rigidly-and-copy-to-clipboard` | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
-`crux-find-user-init-file`                  | <kbd>C-c I</kbd> | Open user's init file.
-`crux-find-shell-init-file`                 | <kbd>C-c S</kbd> | Open shell's init file.
-`crux-top-join-lines`                       | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
-`crux-kill-whole-line`                      | <kbd>Super-k</kbd> | Kill whole line
-`crux-kill-line-backwards`                  | <kbd>C-Backspace</kbd> | Kill line backwards
-`crux-ispell-word-then-abbrev`              | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
+Command                                             | Suggested Keybinding(s)         | Description
+----------------------------------------------------|---------------------------------|------------------------
+`crux-open-with`                                    | <kbd>C-c o</kbd>   | Open the currently visited file with an external program.
+`crux-smart-open-line-above`                        | <kbd>C-S-RET</kbd> or <kbd>Super-o</kbd> | Insert an empty line above the current line and indent it properly.
+`crux-smart-open-line`                              | <kbd>S-RET</kbd> or <kbd>M-o</kbd> | Insert an empty line and indent it properly (as in most IDEs).
+`crux-cleanup-buffer-or-region`                     | <kbd>C-c n</kbd> | Fix indentation in buffer and strip whitespace.
+`crux-recentf-ido-find-file`                        | <kbd>C-c f</kbd> or <kbd>Super-r</kbd> | Open recently visited file.
+`crux-view-url`                                     | <kbd>C-c u</kbd> | Open a new buffer containing the contents of URL.
+`crux-eval-and-replace`                             | <kbd>C-c e</kbd> | Eval a bit of Emacs Lisp code and replace it with its result.
+`crux-transpose-windows`                            | <kbd>C-x 4 t</kbd> | Transpose the buffers between two windows.
+`crux-delete-file-and-buffer`                       | <kbd>C-c D</kbd> | Delete current file and buffer.
+`crux-duplicate-current-line-or-region`             | <kbd>C-c d</kbd> | Duplicate the current line (or region).
+`crux-duplicate-and-comment-current-line-or-region` | <kbd>C-c M-d</kbd> | Duplicate and comment the current line (or region).
+`crux-rename-file-and-buffer`                       | <kbd>C-c r</kbd> | Rename the current buffer and its visiting file if any.
+`crux-visit-term-buffer`                            | <kbd>C-c t</kbd> | Open a terminal emulator (`ansi-term`).
+`crux-kill-other-buffers`                           | <kbd>C-c k</kbd> | Kill all open buffers except the one you're currently in.
+`crux-indent-defun`                                 | <kbd>C-M z</kbd> | Indent the definition at point.
+`crux-indent-rigidly-and-copy-to-clipboard`         | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
+`crux-find-user-init-file`                          | <kbd>C-c I</kbd> | Open user's init file.
+`crux-find-shell-init-file`                         | <kbd>C-c S</kbd> | Open shell's init file.
+`crux-top-join-lines`                               | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
+`crux-kill-whole-line`                              | <kbd>Super-k</kbd> | Kill whole line
+`crux-kill-line-backwards`                          | <kbd>C-Backspace</kbd> | Kill line backwards
+`crux-ispell-word-then-abbrev`                      | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
 
 Here's how you'd bind some of the commands to keycombos:
 
