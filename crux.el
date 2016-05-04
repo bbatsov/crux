@@ -226,6 +226,40 @@ point reaches the beginning or end of the buffer, stop there."
     (setq end (line-end-position))
     (cons beg end)))
 
+(defun crux-duplicate-current-line-or-region (arg)
+  "Duplicates the current line or region ARG times.
+   If there's no region, the current line will be duplicated.  However, if
+   there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (pcase-let* ((origin (point))
+               (`(,beg . ,end) (crux-get-positions-of-line-or-region))
+               (region (buffer-substring-no-properties beg end)))
+    (-dotimes arg
+      (lambda (n)
+        (goto-char end)
+        (newline)
+        (insert region)
+        (setq end (point))))
+    (goto-char (+ origin (* (length region) arg) arg))))
+
+(defun crux-duplicate-and-comment-current-line-or-region (arg)
+  "Duplicates and comments the current line or region ARG times.
+   If there's no region, the current line will be duplicated.  However, if
+   there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (pcase-let* ((origin (point))
+               (`(,beg . ,end) (crux-get-positions-of-line-or-region))
+               (region (buffer-substring-no-properties beg end)))
+    (comment-or-uncomment-region beg end)
+    (setq end (line-end-position))
+    (-dotimes arg
+      (lambda (n)
+        (goto-char end)
+        (newline)
+        (insert region)
+        (setq end (point))))
+    (goto-char (+ origin (* (length region) arg) arg))))
+
 (defun crux-rename-file-and-buffer ()
   "Rename current buffer and if the buffer is visiting a file, rename it too."
   (interactive)
