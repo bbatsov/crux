@@ -46,7 +46,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-smart-open-line-above`                        | <kbd>C-S-RET</kbd> or <kbd>Super-o</kbd> | Insert an empty line above the current line and indent it properly.
 `crux-smart-open-line`                              | <kbd>S-RET</kbd> or <kbd>M-o</kbd> | Insert an empty line and indent it properly (as in most IDEs).
 `crux-cleanup-buffer-or-region`                     | <kbd>C-c n</kbd> | Fix indentation in buffer and strip whitespace.
-`crux-recentf-ido-find-file`                        | <kbd>C-c f</kbd> or <kbd>Super-r</kbd> | Open recently visited file.
+`crux-recentf-find-file`                            | <kbd>C-c f</kbd> or <kbd>Super-r</kbd> | Open recently visited file.
 `crux-view-url`                                     | <kbd>C-c u</kbd> | Open a new buffer containing the contents of URL.
 `crux-eval-and-replace`                             | <kbd>C-c e</kbd> | Eval a bit of Emacs Lisp code and replace it with its result.
 `crux-transpose-windows`                            | <kbd>C-x 4 t</kbd> | Transpose the buffers between two windows.
@@ -71,7 +71,7 @@ Here's how you'd bind some of the commands to keycombos:
 (global-set-key [remap move-beginning-of-line] #'crux-move-beginning-of-line)
 (global-set-key (kbd "C-c o") #'crux-open-with)
 (global-set-key [(shift return)] #'crux-smart-open-line)
-(global-set-key (kbd "s-r") #'crux-recentf-ido-find-file)
+(global-set-key (kbd "s-r") #'crux-recentf-find-file)
 (global-set-key (kbd "C-<backspace>" #'crux-kill-line-backwards))
 (global-set-key [remap kill-whole-line] #'crux-kill-whole-line)
 ```
