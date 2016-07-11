@@ -375,14 +375,16 @@ as the current user."
   (interactive)
   (insert (format-time-string "%c" (current-time))))
 
-(defun crux-recentf-ido-find-file ()
+(defun crux-recentf-find-file ()
   "Find a recent file using ido."
   (interactive)
-  (let ((file (ido-completing-read "Choose recent file: "
-                                   (mapcar #'abbreviate-file-name recentf-list)
-                                   nil t)))
+  (let ((file (completing-read "Choose recent file: "
+                               (mapcar #'abbreviate-file-name recentf-list)
+                               nil t)))
     (when file
       (find-file file))))
+
+(defalias 'crux-recentf-ido-find-file 'crux-recentf-find-file)
 
 ;; modified from https://www.emacswiki.org/emacs/TransposeWindows
 (defun crux-transpose-windows (arg)
