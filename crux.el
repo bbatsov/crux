@@ -313,7 +313,7 @@ point reaches the beginning or end of the buffer, stop there."
 (defun crux-eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
-  (let ((value (eval (preceding-sexp))))
+  (let ((value (eval (elisp--preceding-sexp))))
     (backward-kill-sexp)
     (insert (format "%s" value))))
 
