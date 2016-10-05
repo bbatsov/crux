@@ -38,6 +38,8 @@
 (require 'seq)
 (require 'tramp)
 
+(declare-function dired-get-file-for-visit "dired")
+
 (defgroup crux nil
   "crux configuration."
   :prefix "crux-"
