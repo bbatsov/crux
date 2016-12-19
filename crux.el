@@ -127,7 +127,7 @@ If the process in that buffer died, ask to restart."
                              (ansi-term crux-shell (concat crux-term-buffer-name "-term")))
                            (format "*%s-term*" crux-term-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
-             (y-or-n-p "Restart? "))
+             (y-or-n-p "The process has died. Do you want to restart it? "))
     (kill-buffer-and-window)
     (crux-visit-term-buffer)))
 
