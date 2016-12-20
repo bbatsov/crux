@@ -120,11 +120,16 @@ the current buffer."
     (switch-to-buffer-other-window buffer-name)))
 
 (defun crux-visit-term-buffer ()
-  "Create or visit a terminal buffer."
+  "Create or visit a terminal buffer.
+If the process in that buffer died, ask to restart."
   (interactive)
   (crux-start-or-switch-to (lambda ()
                              (ansi-term crux-shell (concat crux-term-buffer-name "-term")))
-                           (format "*%s-term*" crux-term-buffer-name)))
+                           (format "*%s-term*" crux-term-buffer-name))
+  (when (and (null (get-buffer-process (current-buffer)))
+             (y-or-n-p "The process has died. Do you want to restart it? "))
+    (kill-buffer-and-window)
+    (crux-visit-term-buffer)))
 
 (defun crux-indent-rigidly-and-copy-to-clipboard (begin end arg)
   "Indent region between BEGIN and END by ARG columns and copy to clipboard."
