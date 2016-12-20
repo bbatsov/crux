@@ -97,7 +97,7 @@ With a prefix ARG always prompt for command to use."
          (program (if (or arg (not open))
                       (read-shell-command "Open current file with: ")
                     open)))
-    (start-process "crux-open-with-process" nil program current-file-name)))
+    (call-process program nil 0 nil current-file-name)))
 
 (defun crux-buffer-mode (buffer-or-name)
   "Retrieve the `major-mode' of BUFFER-OR-NAME."
