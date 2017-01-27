@@ -485,6 +485,24 @@ abort completely with `C-g'."
                    bef aft (if p "loc" "glob")))
       (user-error "No typo at or before point"))))
 
+(defun crux-package-install-temp (pkg)
+  "Like `package-install' but don't select packages."
+  (interactive
+   (progn
+     (unless package--initialized
+       (package-initialize t))
+     (unless package-archive-contents
+       (package-refresh-contents))
+     (list (intern (completing-read
+                    "Install package (temp): "
+                    (delq nil
+                          (mapcar (lambda (elt)
+                                    (unless (package-installed-p (car elt))
+                                      (symbol-name (car elt))))
+                                  package-archive-contents))
+                    nil t)))))
+  (package-install pkg t))
+
 (defmacro crux-with-region-or-buffer (func)
   "When called with no active region, call FUNC on current buffer.
 
