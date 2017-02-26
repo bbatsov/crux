@@ -180,6 +180,19 @@ With a prefix ARG open line above the current line."
       (move-end-of-line nil)
       (newline-and-indent))))
 
+(defun crux-smart-kill-line (arg)
+  "Kill to the end of the line and kill whole line on the next call"
+  (interactive "P")
+  (let ((orig-point (point)))
+    (move-end-of-line 1)
+    (if (= orig-point (point))
+        (crux-kill-whole-line)
+      (progn
+        (goto-char orig-point)
+        (kill-line))
+      )))
+
+
 (defun crux-top-join-line ()
   "Join the current line with the line beneath it."
   (interactive)
