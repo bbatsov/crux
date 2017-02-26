@@ -43,6 +43,7 @@ individual commands to whatever keybindings you prefer.
 Command                                             | Suggested Keybinding(s)         | Description
 ----------------------------------------------------|---------------------------------|------------------------
 `crux-open-with`                                    | <kbd>C-c o</kbd>   | Open the currently visited file with an external program.
+`crux-smart-kill-line`                              | <kbd>C-k</kbd> or <kbd>Super-k</kbd> | First kill to end of line, then kill the whole line.
 `crux-smart-open-line-above`                        | <kbd>C-S-RET</kbd> or <kbd>Super-o</kbd> | Insert an empty line above the current line and indent it properly.
 `crux-smart-open-line`                              | <kbd>S-RET</kbd> or <kbd>M-o</kbd> | Insert an empty line and indent it properly (as in most IDEs).
 `crux-cleanup-buffer-or-region`                     | <kbd>C-c n</kbd> | Fix indentation in buffer and strip whitespace.
