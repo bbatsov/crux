@@ -51,6 +51,12 @@
   :type 'list
   :group 'crux)
 
+(defcustom crux-untabify-sensitive-modes
+  '(makefile-bsdmake-mode)
+  "Modes for which untabify is suppressed."
+  :type 'list
+  :group 'crux)
+
 (defcustom crux-shell (getenv "SHELL")
   "The default shell to run with `crux-visit-term-buffer'."
   :type 'string
@@ -312,7 +318,8 @@ point reaches the beginning or end of the buffer, stop there."
 (defun crux-cleanup-buffer-or-region ()
   "Cleanup a region if selected, otherwise the whole buffer."
   (interactive)
-  (call-interactively #'untabify)
+  (unless (member major-mode crux-untabify-sensitive-modes)
+    (call-interactively #'untabify))
   (unless (member major-mode crux-indent-sensitive-modes)
     (call-interactively #'indent-region))
   (whitespace-cleanup))
