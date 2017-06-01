@@ -61,7 +61,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-indent-rigidly-and-copy-to-clipboard`         | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
 `crux-find-user-init-file`                          | <kbd>C-c I</kbd> | Open user's init file.
 `crux-find-shell-init-file`                         | <kbd>C-c S</kbd> | Open shell's init file.
-`crux-top-join-lines`                               | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
+`crux-top-join-line`                                | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                              | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                          | <kbd>C-Backspace</kbd> | Kill line backwards
 `crux-ispell-word-then-abbrev`                      | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
