@@ -220,7 +220,7 @@ Matches whitespace in nearly all major modes.  Matches the terminal prompts
 (add-hook 'eshell-mode-hook (lambda () (setq crux-smart-line-start-regex "^[^$\n]*$ ")))
 
 (defun move-to-smart-line-start ()
-  "Move to the beginning, skipping crux-smart-line-start-regexd match."
+  "Move to the beginning, skipping crux-smart-line-start-regex match."
   (interactive)
   (move-beginning-of-line nil)
   (search-forward-regexp crux-smart-line-start-regex))
