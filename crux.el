@@ -156,7 +156,7 @@ Position the cursor at its beginning, according to the current mode."
   (if electric-indent-inhibit
       ;; We can't use `indent-according-to-mode' in languages like Python,
       ;; as there are multiple possible indentations with different meanings.
-      (let* ((indent-end (progn (back-to-indentation) (point)))
+      (let* ((indent-end (progn (move-to-smart-line-start) (point)))
              (indent-start (progn (move-beginning-of-line nil) (point)))
              (indent-chars (buffer-substring indent-start indent-end)))
         (forward-line -1)
@@ -203,13 +203,28 @@ With a prefix ARG open line above the current line."
 Passes ARG to command `kill-whole-line' when provided."
   (interactive "p")
   (kill-whole-line arg)
-  (back-to-indentation))
+  (move-to-smart-line-start))
 
 (defun crux-kill-line-backwards ()
   "Kill line backwards and adjust the indentation."
   (interactive)
   (kill-line 0)
   (indent-according-to-mode))
+
+
+(defvar crux-smart-line-start-regex "^[[:space:]]*" "Regex to match pre-line text.
+Matches whitespace in nearly all major modes.  Matches the terminal prompts
+ in 'ansi-term' and 'eshell.")
+(add-hook 'term-mode-hook   (lambda () (setq crux-smart-line-start-regex "^[^#$%>\n]*[#$%>] " )))
+(add-hook 'eshell-mode-hook (lambda () (setq crux-smart-line-start-regex "^[^$\n]*$ ")))
+
+(defun move-to-smart-line-start ()
+  "Move to the beginning, skipping whitespace or terminal prompts if found."
+  (interactive)
+  (move-beginning-of-line nil)
+  (search-forward-regexp crux-smart-line-start-regex))
+
+
 
 (defun crux-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
@@ -230,7 +245,7 @@ point reaches the beginning or end of the buffer, stop there."
       (forward-line (1- arg))))
 
   (let ((orig-point (point)))
-    (back-to-indentation)
+    (move-to-smart-line-start)
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
