@@ -212,14 +212,15 @@ Passes ARG to command `kill-whole-line' when provided."
   (indent-according-to-mode))
 
 
-(defvar crux-smart-line-start-regex "^[[:space:]]*" "Regex to match pre-line text.
+(defvar crux-smart-line-start-regex "^[[:space:]]*"
+  "Regex to match pre-line text.
 Matches whitespace in nearly all major modes.  Matches the terminal prompts
  in 'ansi-term' and 'eshell.")
 (add-hook 'term-mode-hook   (lambda () (setq crux-smart-line-start-regex "^[^#$%>\n]*[#$%>] " )))
 (add-hook 'eshell-mode-hook (lambda () (setq crux-smart-line-start-regex "^[^$\n]*$ ")))
 
 (defun move-to-smart-line-start ()
-  "Move to the beginning, skipping whitespace or terminal prompts if found."
+  "Move to the beginning, skipping crux-smart-line-start-regexd match."
   (interactive)
   (move-beginning-of-line nil)
   (search-forward-regexp crux-smart-line-start-regex))
