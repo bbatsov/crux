@@ -211,13 +211,26 @@ Passes ARG to command `kill-whole-line' when provided."
   (kill-line 0)
   (indent-according-to-mode))
 
+(defvar crux-line-start-regex-term-mode "^[^#$%>\n]*[#$%>] "
+  "Match terminal prompts.
+
+Used by crux functions like crux-move-beginning-of-line to skip over the prompt")
+
+(defvar crux-line-start-regex-eshell-mode "^[^$\n]*$ " "Match eshell prompt.
+
+Used by crux functions like crux-move-beginning-of-line to skip over the prompt")
+
+(defvar crux-line-start-regex "^[[:space:]]*" "Match whitespace in from of line.
+
+Used by crux functions like crux-move-beginning-of-line to skip over whitespace")
+
 (defun move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
   (move-beginning-of-line nil)
-  (let ((line-start-regex (cond ((eq major-mode 'term-mode) "^[^#$%>\n]*[#$%>] ")
-                                ((eq major-mode 'eshell-mode) "^[^$\n]*$ ")
-                                (t "^[[:space:]]*"))))
+  (let ((line-start-regex (cond ((eq major-mode 'term-mode) crux-line-start-regex-term-mode)
+                                ((eq major-mode 'eshell-mode) crux-line-start-regex-eshell-mode)
+                                (t crux-line-start-regex))))
     (search-forward-regexp line-start-regex)))
 
 
