@@ -156,7 +156,7 @@ Position the cursor at its beginning, according to the current mode."
   (if electric-indent-inhibit
       ;; We can't use `indent-according-to-mode' in languages like Python,
       ;; as there are multiple possible indentations with different meanings.
-      (let* ((indent-end (progn (back-to-indentation) (point)))
+      (let* ((indent-end (progn (move-to-mode-line-start) (point)))
              (indent-start (progn (move-beginning-of-line nil) (point)))
              (indent-chars (buffer-substring indent-start indent-end)))
         (forward-line -1)
@@ -203,13 +203,36 @@ With a prefix ARG open line above the current line."
 Passes ARG to command `kill-whole-line' when provided."
   (interactive "p")
   (kill-whole-line arg)
-  (back-to-indentation))
+  (move-to-mode-line-start))
 
 (defun crux-kill-line-backwards ()
   "Kill line backwards and adjust the indentation."
   (interactive)
   (kill-line 0)
   (indent-according-to-mode))
+
+(defvar crux-line-start-regex-term-mode "^[^#$%>\n]*[#$%>] "
+  "Match terminal prompts.
+
+Used by crux functions like crux-move-beginning-of-line to skip over the prompt")
+
+(defvar crux-line-start-regex-eshell-mode "^[^$\n]*$ " "Match eshell prompt.
+
+Used by crux functions like crux-move-beginning-of-line to skip over the prompt")
+
+(defvar crux-line-start-regex "^[[:space:]]*" "Match whitespace in from of line.
+
+Used by crux functions like crux-move-beginning-of-line to skip over whitespace")
+
+(defun move-to-mode-line-start ()
+  "Move to the beginning, skipping mode specific line start regex."
+  (interactive)
+  (move-beginning-of-line nil)
+  (let ((line-start-regex (cond ((eq major-mode 'term-mode) crux-line-start-regex-term-mode)
+                                ((eq major-mode 'eshell-mode) crux-line-start-regex-eshell-mode)
+                                (t crux-line-start-regex))))
+    (search-forward-regexp line-start-regex)))
+
 
 (defun crux-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
@@ -230,7 +253,7 @@ point reaches the beginning or end of the buffer, stop there."
       (forward-line (1- arg))))
 
   (let ((orig-point (point)))
-    (back-to-indentation)
+    (move-to-mode-line-start)
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
