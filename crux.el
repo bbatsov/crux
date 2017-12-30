@@ -164,9 +164,8 @@ Position the cursor at its beginning, according to the current mode."
         ;; the current line.
         (insert indent-chars))
     ;; Just use the current major-mode's indent facility.
-    (progn
-      (forward-line -1)
-      (indent-according-to-mode))))
+    (forward-line -1)
+    (indent-according-to-mode)))
 
 (defun crux-smart-open-line (arg)
   "Insert an empty line after the current line.
@@ -176,9 +175,8 @@ With a prefix ARG open line above the current line."
   (interactive "P")
   (if arg
       (crux-smart-open-line-above)
-    (progn
-      (move-end-of-line nil)
-      (newline-and-indent))))
+    (move-end-of-line nil)
+    (newline-and-indent)))
 
 (defun crux-smart-kill-line ()
   "Kill to the end of the line and kill whole line on the next call."
@@ -187,10 +185,8 @@ With a prefix ARG open line above the current line."
     (move-end-of-line 1)
     (if (= orig-point (point))
         (crux-kill-whole-line)
-      (progn
-        (goto-char orig-point)
-        (kill-line))
-      )))
+      (goto-char orig-point)
+      (kill-line))))
 
 
 (defun crux-top-join-line ()
