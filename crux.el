@@ -62,27 +62,38 @@
   :type 'string
   :group 'crux)
 
-(defcustom crux-shell-zsh-init-files '("$HOME/.zshrc" "$HOME/.zlogin" "$HOME/.zprofile" "$HOME/.zshenv" "$HOME/.zlogout" "/etc/zshenv" "/etc/zprofile" "/etc/zshrc" "/etc/zlogin" "/etc/zlogout" "$ZDOTDIR/.zshrc" "$ZDOTDIR/.zlogin" "$ZDOTDIR/.zprofile" "$ZDOTIR/.zshenv" "$ZDOTDIR/.zlogout")
+(defcustom crux-shell-zsh-init-files
+  '("$HOME/.zshrc" "$HOME/.zlogin" "$HOME/.zprofile" "$HOME/.zshenv"
+    "$HOME/.zlogout" "/etc/zshenv" "/etc/zprofile" "/etc/zshrc" "/etc/zlogin"
+    "/etc/zlogout" "$ZDOTDIR/.zshrc" "$ZDOTDIR/.zlogin" "$ZDOTDIR/.zprofile"
+    "$ZDOTIR/.zshenv" "$ZDOTDIR/.zlogout")
   "The default init files of zsh."
   :type 'list
   :group 'crux)
 
-(defcustom crux-shell-bash-init-files '("$BASH_ENV" "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.bash_login" "$HOME/.profile" "$HOME/.bash_logout" "/etc/bashrc" "/etc/bash_profile" "/etc/bash_login" "/etc/profile" "/etc/bash_logout")
+(defcustom crux-shell-bash-init-files
+  '("$BASH_ENV" "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.bash_login"
+    "$HOME/.profile" "$HOME/.bash_logout" "/etc/bashrc" "/etc/bash_profile"
+    "/etc/bash_login" "/etc/profile" "/etc/bash_logout")
   "The default init files of bash."
   :type 'list
   :group 'crux)
 
-(defcustom crux-shell-tcsh-init-files '("$HOME/.login" "$HOME/.cshrc" "$HOME/.tcshrc" "$HOME/.logout" "/etc/csh.cshrc" "/etc/csh.login" "/etc/csh.logout")
+(defcustom crux-shell-tcsh-init-files
+  '("$HOME/.login" "$HOME/.cshrc" "$HOME/.tcshrc" "$HOME/.logout"
+    "/etc/csh.cshrc" "/etc/csh.login" "/etc/csh.logout")
   "The default init files of tcsh."
   :type 'list
   :group 'crux)
 
-(defcustom crux-shell-fish-init-files '("$HOME/.config/fish/config.fish" "$XDG_CONFIG_HOME/fish/config.fish")
+(defcustom crux-shell-fish-init-files
+  '("$HOME/.config/fish/config.fish" "$XDG_CONFIG_HOME/fish/config.fish")
   "The default init files of fish."
   :type 'list
   :group 'crux)
 
-(defcustom crux-shell-ksh-init-files '("$HOME/.profile" "$ENV" "/etc/profile")
+(defcustom crux-shell-ksh-init-files
+  '("$HOME/.profile" "$ENV" "/etc/profile")
   "The default init files of ksh."
   :type 'list
   :group 'crux)
