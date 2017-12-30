@@ -401,7 +401,10 @@ buffer is not visiting a file."
     (crux-find-alternate-file-as-root buffer-file-name)))
 
 (defun crux-reopen-as-root ()
-  "Find file as root if necessary."
+  "Find file as root if necessary.
+
+Meant to be used as `find-file-hook'.
+See also `crux-reopen-as-root-mode'."
   (unless (or (tramp-tramp-file-p buffer-file-name)
               (equal major-mode 'dired-mode)
               (not (file-exists-p (file-name-directory buffer-file-name)))
