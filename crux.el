@@ -427,7 +427,7 @@ as the current user."
   (insert (format-time-string "%c" (current-time))))
 
 (defun crux-recentf-find-file ()
-  "Find a recent file using ido."
+  "Find a recent file using `completing-read'."
   (interactive)
   (let ((file (completing-read "Choose recent file: "
                                (mapcar #'abbreviate-file-name recentf-list)
