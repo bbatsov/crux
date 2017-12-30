@@ -435,7 +435,7 @@ as the current user."
     (when file
       (find-file file))))
 
-(defalias 'crux-recentf-ido-find-file 'crux-recentf-find-file)
+(define-obsolete-function-alias 'crux-recentf-ido-find-file 'crux-recentf-find-file "0.4.0")
 
 ;; modified from https://www.emacswiki.org/emacs/TransposeWindows
 (defun crux-transpose-windows (arg)
