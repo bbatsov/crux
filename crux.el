@@ -361,7 +361,7 @@ point reaches the beginning or end of the buffer, stop there."
   (interactive)
   (let ((value (eval (elisp--preceding-sexp))))
     (backward-kill-sexp)
-    (insert (format "%s" value))))
+    (insert (format "%S" value))))
 
 (defun crux-recompile-init ()
   "Byte-compile all your dotfiles again."
