@@ -273,8 +273,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 (defun crux-duplicate-current-line-or-region (arg)
   "Duplicates the current line or region ARG times.
-   If there's no region, the current line will be duplicated.  However, if
-   there's a region, all lines that region covers will be duplicated."
+If there's no region, the current line will be duplicated.  However, if
+there's a region, all lines that region covers will be duplicated."
   (interactive "p")
   (pcase-let* ((origin (point))
                (`(,beg . ,end) (crux-get-positions-of-line-or-region))
@@ -288,8 +288,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 (defun crux-duplicate-and-comment-current-line-or-region (arg)
   "Duplicates and comments the current line or region ARG times.
-   If there's no region, the current line will be duplicated.  However, if
-   there's a region, all lines that region covers will be duplicated."
+If there's no region, the current line will be duplicated.  However, if
+there's a region, all lines that region covers will be duplicated."
   (interactive "p")
   (pcase-let* ((origin (point))
                (`(,beg . ,end) (crux-get-positions-of-line-or-region))
