@@ -180,9 +180,9 @@ With a prefix ARG open line above the current line."
       (move-end-of-line nil)
       (newline-and-indent))))
 
-(defun crux-smart-kill-line (arg)
-  "Kill to the end of the line and kill whole line on the next call"
-  (interactive "P")
+(defun crux-smart-kill-line ()
+  "Kill to the end of the line and kill whole line on the next call."
+  (interactive)
   (let ((orig-point (point)))
     (move-end-of-line 1)
     (if (= orig-point (point))
