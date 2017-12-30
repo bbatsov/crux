@@ -492,7 +492,7 @@ Doesn't mess with special buffers."
                            (t (error "Unknown shell"))))
          (candidates (cl-remove-if-not 'file-exists-p (mapcar 'substitute-in-file-name shell-init-file))))
     (if (> (length candidates) 1)
-        (find-file-other-window (completing-read "Choose shell init file:" candidates))
+        (find-file-other-window (completing-read "Choose shell init file: " candidates))
       (find-file-other-window (car candidates)))))
 
 ;; http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html
