@@ -98,6 +98,7 @@
   :type 'list
   :group 'crux)
 
+;;;###autoload
 (defun crux-open-with (arg)
   "Open visited file in default external program.
 When in dired mode, open file under the cursor.
@@ -136,6 +137,7 @@ the current buffer."
         (funcall function))
     (switch-to-buffer-other-window buffer-name)))
 
+;;;###autoload
 (defun crux-visit-term-buffer ()
   "Create or visit a terminal buffer.
 If the process in that buffer died, ask to restart."
@@ -148,6 +150,7 @@ If the process in that buffer died, ask to restart."
     (kill-buffer-and-window)
     (crux-visit-term-buffer)))
 
+;;;###autoload
 (defun crux-indent-rigidly-and-copy-to-clipboard (begin end arg)
   "Indent region between BEGIN and END by ARG columns and copy to clipboard."
   (interactive "r\nP")
@@ -158,6 +161,7 @@ If the process in that buffer died, ask to restart."
       (indent-rigidly (point-min) (point-max) arg)
       (clipboard-kill-ring-save (point-min) (point-max)))))
 
+;;;###autoload
 (defun crux-smart-open-line-above ()
   "Insert an empty line above the current line.
 Position the cursor at its beginning, according to the current mode."
@@ -178,6 +182,7 @@ Position the cursor at its beginning, according to the current mode."
     (forward-line -1)
     (indent-according-to-mode)))
 
+;;;###autoload
 (defun crux-smart-open-line (arg)
   "Insert an empty line after the current line.
 Position the cursor at its beginning, according to the current mode.
@@ -189,6 +194,7 @@ With a prefix ARG open line above the current line."
     (move-end-of-line nil)
     (newline-and-indent)))
 
+;;;###autoload
 (defun crux-smart-kill-line ()
   "Kill to the end of the line and kill whole line on the next call."
   (interactive)
@@ -199,12 +205,13 @@ With a prefix ARG open line above the current line."
       (goto-char orig-point)
       (kill-line))))
 
-
+;;;###autoload
 (defun crux-top-join-line ()
   "Join the current line with the line beneath it."
   (interactive)
   (delete-indentation 1))
 
+;;;###autoload
 (defun crux-kill-whole-line (&optional arg)
   "A simple wrapper around command `kill-whole-line' that respects indentation.
 Passes ARG to command `kill-whole-line' when provided."
@@ -212,6 +219,7 @@ Passes ARG to command `kill-whole-line' when provided."
   (kill-whole-line arg)
   (move-to-mode-line-start))
 
+;;;###autoload
 (defun crux-kill-line-backwards ()
   "Kill line backwards and adjust the indentation."
   (interactive)
@@ -240,7 +248,7 @@ Used by crux functions like crux-move-beginning-of-line to skip over whitespace"
                                 (t crux-line-start-regex))))
     (search-forward-regexp line-start-regex (line-end-position) t)))
 
-
+;;;###autoload
 (defun crux-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 
@@ -264,6 +272,7 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
+;;;###autoload
 (defun crux-indent-defun ()
   "Indent the current defun."
   (interactive)
@@ -282,6 +291,7 @@ point reaches the beginning or end of the buffer, stop there."
     (setq end (line-end-position))
     (cons beg end)))
 
+;;;###autoload
 (defun crux-duplicate-current-line-or-region (arg)
   "Duplicates the current line or region ARG times.
 If there's no region, the current line will be duplicated.  However, if
@@ -297,6 +307,7 @@ there's a region, all lines that region covers will be duplicated."
       (setq end (point)))
     (goto-char (+ origin (* (length region) arg) arg))))
 
+;;;###autoload
 (defun crux-duplicate-and-comment-current-line-or-region (arg)
   "Duplicates and comments the current line or region ARG times.
 If there's no region, the current line will be duplicated.  However, if
@@ -314,6 +325,7 @@ there's a region, all lines that region covers will be duplicated."
       (setq end (point)))
     (goto-char (+ origin (* (length region) arg) arg))))
 
+;;;###autoload
 (defun crux-rename-file-and-buffer ()
   "Rename current buffer and if the buffer is visiting a file, rename it too."
   (interactive)
@@ -331,6 +343,7 @@ there's a region, all lines that region covers will be duplicated."
 
 (defalias 'crux-rename-buffer-and-file #'crux-rename-file-and-buffer)
 
+;;;###autoload
 (defun crux-delete-file-and-buffer ()
   "Kill the current buffer and deletes the file it is visiting."
   (interactive)
@@ -345,6 +358,7 @@ there's a region, all lines that region covers will be duplicated."
 
 (defalias 'crux-delete-buffer-and-file #'crux-delete-file-and-buffer)
 
+;;;###autoload
 (defun crux-view-url ()
   "Open a new buffer containing the contents of URL."
   (interactive)
@@ -358,6 +372,7 @@ there's a region, all lines that region covers will be duplicated."
     (delete-blank-lines)
     (set-auto-mode)))
 
+;;;###autoload
 (defun crux-cleanup-buffer-or-region ()
   "Cleanup a region if selected, otherwise the whole buffer."
   (interactive)
@@ -367,6 +382,7 @@ there's a region, all lines that region covers will be duplicated."
     (call-interactively #'indent-region))
   (whitespace-cleanup))
 
+;;;###autoload
 (defun crux-eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
@@ -374,6 +390,7 @@ there's a region, all lines that region covers will be duplicated."
     (backward-kill-sexp)
     (insert (format "%S" value))))
 
+;;;###autoload
 (defun crux-recompile-init ()
   "Byte-compile all your dotfiles again."
   (interactive)
@@ -395,6 +412,7 @@ See `file-attributes' for more info."
   (find-alternate-file (concat "/sudo:root@localhost:" filename)))
 
 (require 'ido)
+;;;###autoload
 (defun crux-sudo-edit (&optional arg)
   "Edit currently visited file as root.
 
@@ -407,6 +425,7 @@ buffer is not visiting a file."
                          (ido-read-file-name "Find file (as root): ")))
     (crux-find-alternate-file-as-root buffer-file-name)))
 
+;;;###autoload
 (defun crux-reopen-as-root ()
   "Find file as root if necessary.
 
@@ -428,11 +447,13 @@ as the current user."
       (add-hook 'find-file-hook #'crux-reopen-as-root)
     (remove-hook 'find-file-hook #'crux-reopen-as-root)))
 
+;;;###autoload
 (defun crux-insert-date ()
   "Insert a timestamp according to locale's date and time format."
   (interactive)
   (insert (format-time-string "%c" (current-time))))
 
+;;;###autoload
 (defun crux-recentf-find-file ()
   "Find a recent file using `completing-read'."
   (interactive)
@@ -445,6 +466,7 @@ as the current user."
 (define-obsolete-function-alias 'crux-recentf-ido-find-file 'crux-recentf-find-file "0.4.0")
 
 ;; modified from https://www.emacswiki.org/emacs/TransposeWindows
+;;;###autoload
 (defun crux-transpose-windows (arg)
   "Transpose the buffers shown in two windows.
 Prefix ARG determines if the current windows buffer is swapped
@@ -462,12 +484,14 @@ transpositions to execute in sequence."
 
 (defalias 'crux-swap-windows 'crux-transpose-windows)
 
+;;;###autoload
 (defun crux-switch-to-previous-buffer ()
   "Switch to previously open buffer.
 Repeated invocations toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
+;;;###autoload
 (defun crux-kill-other-buffers ()
   "Kill all buffers but the current one.
 Doesn't mess with special buffers."
@@ -477,6 +501,7 @@ Doesn't mess with special buffers."
      #'kill-buffer
      (delete (current-buffer) (seq-filter #'buffer-file-name (buffer-list))))))
 
+;;;###autoload
 (defun crux-create-scratch-buffer ()
   "Create a new scratch buffer."
   (interactive)
@@ -484,11 +509,13 @@ Doesn't mess with special buffers."
     (switch-to-buffer buf)
     (funcall initial-major-mode)))
 
+;;;###autoload
 (defun crux-find-user-init-file ()
   "Edit the `user-init-file', in another window."
   (interactive)
   (find-file-other-window user-init-file))
 
+;;;###autoload
 (defun crux-find-shell-init-file ()
   "Edit the shell init file in another window."
   (interactive)
@@ -506,6 +533,7 @@ Doesn't mess with special buffers."
       (find-file-other-window (car candidates)))))
 
 ;; http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html
+;;;###autoload
 (defun crux-ispell-word-then-abbrev (p)
   "Call `ispell-word', then create an abbrev for it.
 With prefix P, create local abbrev.  Otherwise it will
