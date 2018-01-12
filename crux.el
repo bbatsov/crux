@@ -39,6 +39,7 @@
 (require 'tramp)
 
 (declare-function dired-get-file-for-visit "dired")
+(defvar recentf-list)
 
 (defgroup crux nil
   "crux configuration."
