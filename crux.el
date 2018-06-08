@@ -444,6 +444,7 @@ See also `crux-reopen-as-root-mode'."
   "Automatically reopen files as root if we can't write to them
 as the current user."
   :global t
+  :group 'crux
   (if crux-reopen-as-root-mode
       (add-hook 'find-file-hook #'crux-reopen-as-root)
     (remove-hook 'find-file-hook #'crux-reopen-as-root)))
