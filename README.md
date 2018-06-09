@@ -52,6 +52,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-eval-and-replace`                             | <kbd>C-c e</kbd> | Eval a bit of Emacs Lisp code and replace it with its result.
 `crux-transpose-windows`                            | <kbd>C-x 4 t</kbd> | Transpose the buffers between two windows.
 `crux-delete-file-and-buffer`                       | <kbd>C-c D</kbd> | Delete current file and buffer.
+`crux-copy-file-preserve-attributes`                | <kbd>C-c c</kbd> | Copy current file with file attributes preserved
 `crux-duplicate-current-line-or-region`             | <kbd>C-c d</kbd> | Duplicate the current line (or region).
 `crux-duplicate-and-comment-current-line-or-region` | <kbd>C-c M-d</kbd> | Duplicate and comment the current line (or region).
 `crux-rename-file-and-buffer`                       | <kbd>C-c r</kbd> | Rename the current buffer and its visiting file if any.
