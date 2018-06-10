@@ -590,6 +590,27 @@ Doesn't mess with special buffers."
         (find-file-other-window (completing-read "Choose shell init file: " candidates))
       (find-file-other-window (car candidates)))))
 
+;;;###autoload
+(defun crux-upcase-region (beg end)
+  "`upcase-region' when `transient-mark-mode' is on and region is active."
+  (interactive "*r")
+  (when (use-region-p)
+    (upcase-region beg end)))
+
+;;;###autoload
+(defun crux-downcase-region (beg end)
+  "`downcase-region' when `transient-mark-mode' is on and region is active."
+  (interactive "*r")
+  (when (use-region-p)
+    (downcase-region beg end)))
+
+;;;###autoload
+(defun crux-capitalize-region (beg end)
+  "`capitalize-region' when `transient-mark-mode' is on and region is active."
+  (interactive "*r")
+  (when (use-region-p)
+    (capitalize-region beg end)))
+
 ;; http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html
 ;;;###autoload
 (defun crux-ispell-word-then-abbrev (p)
