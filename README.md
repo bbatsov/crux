@@ -61,6 +61,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-indent-defun`                                 | <kbd>C-M z</kbd> | Indent the definition at point.
 `crux-indent-rigidly-and-copy-to-clipboard`         | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
 `crux-find-user-init-file`                          | <kbd>C-c I</kbd> | Open user's init file.
+`crux-find-user-custom-file`                        | <kbd>C-c ,</kbd> | Open user's custom file.
 `crux-find-shell-init-file`                         | <kbd>C-c S</kbd> | Open shell's init file.
 `crux-top-join-line`                                | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                              | <kbd>Super-k</kbd> | Kill whole line

@@ -566,6 +566,14 @@ Doesn't mess with special buffers."
   (find-file-other-window user-init-file))
 
 ;;;###autoload
+(defun crux-find-user-custom-file ()
+  "Edit the `custom-file', in another window."
+    (interactive)
+    (if custom-file
+        (find-file-other-window custom-file)
+      (message "No custom file found.")))
+
+;;;###autoload
 (defun crux-find-shell-init-file ()
   "Edit the shell init file in another window."
   (interactive)
