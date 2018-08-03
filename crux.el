@@ -456,11 +456,24 @@ See `file-attributes' for more info."
   (equal (crux-file-owner-uid filename)
          (user-uid)))
 
+(defun crux-already-root-p ()
+  (let ((remote-method (file-remote-p default-directory 'method))
+        (remote-user (file-remote-p default-directory 'user)))
+    (and remote-method
+         (or (member remote-method '("sudo" "su" "ksu" "doas"))
+             (string= remote-user "root")))))
+
 (defun crux-find-alternate-file-as-root (filename)
   "Wraps `find-alternate-file' with opening FILENAME as root."
-  (find-alternate-file (concat "/sudo:root@localhost:" filename)))
+  (let ((remote-method (file-remote-p default-directory 'method))
+        (remote-user (file-remote-p default-directory 'user))
+        (remote-host (file-remote-p default-directory 'host))
+        (remote-localname (file-remote-p filename 'localname)))
+    (find-alternate-file (format "/%s:root@%s:%s"
+                                 (or remote-method "sudo")
+                                 (or remote-host "localhost")
+                                 (or remote-localname filename)))))
 
-(require 'ido)
 ;;;###autoload
 (defun crux-sudo-edit (&optional arg)
   "Edit currently visited file as root.
@@ -470,9 +483,20 @@ Will also prompt for a file to visit if current
 buffer is not visiting a file."
   (interactive "P")
   (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:"
-                         (ido-read-file-name "Find file (as root): ")))
-    (crux-find-alternate-file-as-root buffer-file-name)))
+      (let ((remote-method (file-remote-p default-directory 'method))
+            (remote-host (file-remote-p default-directory 'host))
+            (remote-localname (file-remote-p default-directory 'localname)))
+        (find-file (format "/%s:root@%s:%s"
+                           (or remote-method "sudo")
+                           (or remote-host "localhost")
+                           (or remote-localname
+                               (read-file-name "Find file (as root): ")))))
+
+    (if (crux-already-root-p)
+        (message "Already editing this file as root.")
+      (let ((place (point)))
+        (crux-find-alternate-file-as-root buffer-file-name)
+        (goto-char place)))))
 
 ;;;###autoload
 (defun crux-reopen-as-root ()
