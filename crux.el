@@ -6,7 +6,6 @@
 ;; URL: https://github.com/bbatsov/crux
 ;; Version: 0.4.0-snapshot
 ;; Keywords: convenience
-;; Package-Requires: ((seq "1.11"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -35,7 +34,6 @@
 ;;; Code:
 
 (require 'thingatpt)
-(require 'seq)
 (require 'tramp)
 
 (declare-function dired-get-file-for-visit "dired")
@@ -547,9 +545,12 @@ Repeated invocations toggle between the two most recently open buffers."
 Doesn't mess with special buffers."
   (interactive)
   (when (y-or-n-p "Are you sure you want to kill all buffers but the current one? ")
-    (seq-each
-     #'kill-buffer
-     (delete (current-buffer) (seq-filter #'buffer-file-name (buffer-list))))))
+  (dolist (buffer (delq (current-buffer) (buffer-list)))
+    (let ((name (buffer-name buffer)))
+      (when (and name (not (string-equal name ""))
+                 (/= (aref name 0) ?\s)
+                 (string-match "^[^\*]" name))
+        (funcall 'kill-buffer buffer))))))
 
 ;;;###autoload
 (defun crux-create-scratch-buffer ()
