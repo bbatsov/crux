@@ -135,6 +135,12 @@ expected name of the shell buffer."
   :type 'symbol
   :group 'crux)
 
+(defcustom crux-should-move-visually
+  nil
+  "Wheter moves should take visual lines into account or not."
+  :type 'boolean
+  :group 'crux)
+
 (defun crux-ansi-term (buffer-name)
   "Use ansi-term for `crux-visit-term-buffer'"
   (ansi-term crux-shell buffer-name))
@@ -307,7 +313,11 @@ Deletes whitespace at join."
 (defun move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
-  (move-beginning-of-line nil)
+
+  (if crux-should-move-visually
+      (beginning-of-visual-line nil)
+    (move-beginning-of-line nil))
+
   (let ((line-start-regex (cdr (seq-find
                                 (lambda (e) (derived-mode-p (car e)))
                                 crux-line-start-regex-alist
