@@ -59,7 +59,7 @@
   :group 'crux)
 
 (defcustom crux-shell (getenv "SHELL")
-  "The default shell to run with `crux-visit-term-buffer'."
+  "The default shell to run with `crux-ansi-term'."
   :type 'string
   :group 'crux)
 
@@ -99,6 +99,28 @@
   :type 'list
   :group 'crux)
 
+(defcustom crux-shell-func
+  #'crux-ansi-term
+  "The function used to start the term buffer if it's not already running.
+
+It will be called with a two arguments: the shell to start and the
+expected name of the shell buffer."
+  :type 'symbol
+  :group 'crux)
+
+(defun crux-ansi-term (buffer-name)
+  "Use ansi-term for `crux-visit-term-buffer'"
+  (ansi-term crux-shell buffer-name))
+
+(defun crux-eshell (buffer-name)
+  "Use eshell for `crux-visit-term-buffer'"
+  (let ((eshell-buffer-name (format "*%s*" buffer-name)))
+    (eshell buffer-name)))
+
+(defun crux-shell (buffer-name)
+  "Use eshell for `crux-visit-term-buffer'"
+  (shell (format "*%s*" buffer-name)))
+
 ;;;###autoload
 (defun crux-open-with (arg)
   "Open visited file in default external program.
@@ -123,8 +145,8 @@ With a prefix ARG always prompt for command to use."
   (with-current-buffer buffer-or-name
     major-mode))
 
-(defvar crux-term-buffer-name "ansi"
-  "The default `ansi-term' name used by `crux-visit-term-buffer'.
+(defvar crux-term-buffer-name "ansi-term"
+  "The default buffer name used by `crux-visit-term-buffer'.
 This variable can be set via .dir-locals.el to provide multi-term support.")
 
 (defun crux-start-or-switch-to (function buffer-name)
@@ -144,9 +166,10 @@ the current buffer."
 If the process in that buffer died, ask to restart."
   (interactive)
   (crux-start-or-switch-to (lambda ()
-                             (ansi-term crux-shell (concat crux-term-buffer-name "-term")))
-                           (format "*%s-term*" crux-term-buffer-name))
+                             (apply crux-shell-func (list crux-term-buffer-name)))
+                           (format "*%s*" crux-term-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
+             (not (eq major-mode 'eshell-mode)) ; eshell doesn't have a process
              (y-or-n-p "The process has died.  Do you want to restart it? "))
     (kill-buffer-and-window)
     (crux-visit-term-buffer)))
