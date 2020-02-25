@@ -99,8 +99,18 @@
   :type 'list
   :group 'crux)
 
-(defcustom crux-shell-func
+
+(defcustom crux-term-func
   #'crux-ansi-term
+  "The function used to start the term buffer if it's not already running.
+
+It will be called with a two arguments: the shell to start and the
+expected name of the shell buffer."
+  :type 'symbol
+  :group 'crux)
+
+(defcustom crux-shell-func
+  #'crux-eshell
   "The function used to start the term buffer if it's not already running.
 
 It will be called with a two arguments: the shell to start and the
@@ -149,6 +159,10 @@ With a prefix ARG always prompt for command to use."
   "The default buffer name used by `crux-visit-term-buffer'.
 This variable can be set via .dir-locals.el to provide multi-term support.")
 
+(defvar crux-shell-buffer-name "shell"
+  "The default buffer name used by `crux-visit-shell-buffer'.
+This variable can be set via .dir-locals.el to provide multi-term support.")
+
 (defun crux-start-or-switch-to (function buffer-name)
   "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
 Otherwise switch to the buffer named BUFFER-NAME.  Don't clobber
@@ -166,13 +180,26 @@ the current buffer."
 If the process in that buffer died, ask to restart."
   (interactive)
   (crux-start-or-switch-to (lambda ()
-                             (apply crux-shell-func (list crux-term-buffer-name)))
+                             (apply crux-term-func (list crux-term-buffer-name)))
                            (format "*%s*" crux-term-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
-             (not (eq major-mode 'eshell-mode)) ; eshell doesn't have a process
              (y-or-n-p "The process has died.  Do you want to restart it? "))
     (kill-buffer-and-window)
     (crux-visit-term-buffer)))
+
+;;;###autoload
+(defun crux-visit-shell-buffer ()
+  "Create or visit a shell buffer.
+If the process in that buffer died, ask to restart."
+  (interactive)
+  (crux-start-or-switch-to (lambda ()
+                             (apply crux-shell-func (list crux-shell-buffer-name)))
+                           (format "*%s*" crux-shell-buffer-name))
+  (when (and (null (get-buffer-process (current-buffer)))
+             (not (eq major-mode 'eshell)) ; eshell has no process
+             (y-or-n-p "The process has died.  Do you want to restart it? "))
+    (kill-buffer-and-window)
+    (crux-visit-shell-buffer)))
 
 ;;;###autoload
 (defun crux-indent-rigidly-and-copy-to-clipboard (begin end arg)
