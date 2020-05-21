@@ -294,6 +294,16 @@ Passes ARG to command `kill-whole-line' when provided."
   (kill-line 0)
   (indent-according-to-mode))
 
+;;;###autoload
+(defun crux-kill-and-join-forward (&optional arg)
+  "If at end of line, join with following; otherwise kill line.
+Passes ARG to command `kill-line' when provided.
+Deletes whitespace at join."
+  (interactive "P")
+  (if (and (eolp) (not (bolp)))
+      (delete-indentation 1)
+    (kill-line arg)))
+
 (defun move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)

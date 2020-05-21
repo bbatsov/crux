@@ -66,6 +66,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-top-join-line`                                | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                              | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                          | <kbd>C-Backspace</kbd> | Kill line backwards
+`crux-kill-and-join-forward`                        | <kbd>C-S-Backspace</kbd> or <kbd>C-k</kbd> | If at end of line, join with following; otherwise kill line.
 `crux-ispell-word-then-abbrev`                      | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
 `crux-upcase-region`                                | <kbd>C-x C-u</kbd> | `upcase-region` when `transient-mark-mode` is on and region is active.
 `crux-downcase-region`                              | <kbd>C-x C-l</kbd> | `downcase-region` when `transient-mark-mode` is on and region is active.
