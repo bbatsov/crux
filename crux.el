@@ -621,6 +621,15 @@ Repeated invocations toggle between the two most recently open buffers."
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
 ;;;###autoload
+(defun crux-other-window-or-switch-buffer ()
+  "Call `other-window' if more than one window is visible.
+Switch to most recent buffer otherwise."
+  (interactive)
+  (if (one-window-p)
+      (switch-to-buffer nil)
+    (other-window 1)))
+
+;;;###autoload
 (defun crux-kill-other-buffers ()
   "Kill all buffers but the current one.
 Doesn't mess with special buffers."
