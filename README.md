@@ -70,6 +70,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-upcase-region`                                | <kbd>C-x C-u</kbd> | `upcase-region` when `transient-mark-mode` is on and region is active.
 `crux-downcase-region`                              | <kbd>C-x C-l</kbd> | `downcase-region` when `transient-mark-mode` is on and region is active.
 `crux-capitalize-region`                            | <kbd>C-x M-c</kbd> | `capitalize-region` when `transient-mark-mode` is on and region is active.
+`crux-other-window-or-switch-buffer`                | <kbd>M-o</kbd>     | Select other window, or switch to most recent buffer if only one windows.
 
 Here's how you'd bind some of the commands to keycombos:
 
