@@ -227,26 +227,26 @@ Passes ARG to command `kill-whole-line' when provided."
   (kill-line 0)
   (indent-according-to-mode))
 
-(defvar crux-line-start-regex-term-mode "^[^#$%>\n]*[#$%>] "
-  "Match terminal prompts.
+(defvar crux-line-start-regex-alist
+  '((term-mode . "^[^#$%>\n]*[#$%>] ")
+    (eshell-mode . "^[^$\n]*$ ")
+    (org-mode . "^\\(\*\\|[[:space:]]*\\)* ")
+    (t . "^[[:space:]]*"))
+  "Alist of major modes and line starts.
 
-Used by crux functions like crux-move-beginning-of-line to skip over the prompt")
+The key is a major mode.  The value is a regular expression
+matching the characters to be skipped over.  If no major mode is
+found, the value for t is used as a default.
 
-(defvar crux-line-start-regex-eshell-mode "^[^$\n]*$ " "Match eshell prompt.
-
-Used by crux functions like crux-move-beginning-of-line to skip over the prompt")
-
-(defvar crux-line-start-regex "^[[:space:]]*" "Match whitespace in from of line.
-
-Used by crux functions like crux-move-beginning-of-line to skip over whitespace")
+Used by crux functions like `crux-move-beginning-of-line' to skip
+over whitespace, prompts, and markup at the beginning of the line.")
 
 (defun move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
   (move-beginning-of-line nil)
-  (let ((line-start-regex (cond ((eq major-mode 'term-mode) crux-line-start-regex-term-mode)
-                                ((eq major-mode 'eshell-mode) crux-line-start-regex-eshell-mode)
-                                (t crux-line-start-regex))))
+  (let ((line-start-regex (or (assoc-default major-mode crux-line-start-regex-alist)
+                              (assoc-default t crux-line-start-regex-alist))))
     (search-forward-regexp line-start-regex (line-end-position) t)))
 
 ;;;###autoload
