@@ -91,11 +91,11 @@ For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add 
 
 ## Origins of crux
 
-Many of the functions in crux started life as blog posts on 
+Many of the functions in crux started life as blog posts on
 [Emacs Redux](https://emacsredux.com), then were included in
 [prelude](https://www.github.com/bbatsov/prelude), before finally
 being [extracted](https://emacsredux.com/blog/2016/01/30/crux/)
-to crux. You can see a full list of blog posts on functions 
+to crux. You can see a full list of blog posts on functions
 in crux on the [tags page](https://emacsredux.com/tags/#crux).
 
 ## Using the bundled advices
@@ -141,7 +141,7 @@ automatically opened as root.
 
 ## License
 
-Copyright © 2015 Bozhidar Batsov and [contributors][].
+Copyright © 2015-2020 Bozhidar Batsov and [contributors][].
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
