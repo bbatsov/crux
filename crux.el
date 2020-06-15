@@ -58,6 +58,23 @@
   :type 'list
   :group 'crux)
 
+(defcustom crux-line-start-regex-alist
+  '((term-mode . "^[^#$%>\n]*[#$%>] ")
+    (eshell-mode . "^[^$\n]*$ ")
+    (org-mode . "^\\(\*\\|[[:space:]]*\\)* ")
+    (default . "^[[:space:]]*"))
+  "Alist of major modes and line starts.
+
+The key is a major mode.  The value is a regular expression
+matching the characters to be skipped over.  If no major mode is
+found, use the regex specified by the default key.
+
+Used by crux functions like `crux-move-beginning-of-line' to skip
+over whitespace, prompts, and markup at the beginning of the line."
+  :type 'list
+  :group 'crux)
+
+
 (defcustom crux-shell (getenv "SHELL")
   "The default shell to run with `crux-visit-term-buffer'."
   :type 'string
@@ -227,26 +244,14 @@ Passes ARG to command `kill-whole-line' when provided."
   (kill-line 0)
   (indent-according-to-mode))
 
-(defvar crux-line-start-regex-alist
-  '((term-mode . "^[^#$%>\n]*[#$%>] ")
-    (eshell-mode . "^[^$\n]*$ ")
-    (org-mode . "^\\(\*\\|[[:space:]]*\\)* ")
-    (t . "^[[:space:]]*"))
-  "Alist of major modes and line starts.
-
-The key is a major mode.  The value is a regular expression
-matching the characters to be skipped over.  If no major mode is
-found, the value for t is used as a default.
-
-Used by crux functions like `crux-move-beginning-of-line' to skip
-over whitespace, prompts, and markup at the beginning of the line.")
-
 (defun move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
   (move-beginning-of-line nil)
-  (let ((line-start-regex (or (assoc-default major-mode crux-line-start-regex-alist)
-                              (assoc-default t crux-line-start-regex-alist))))
+  (let ((line-start-regex (cdr (seq-find
+                                (lambda (e) (derived-mode-p (car e)))
+                                crux-line-start-regex-alist
+                                (assoc 'default crux-line-start-regex-alist)))))
     (search-forward-regexp line-start-regex (line-end-position) t)))
 
 ;;;###autoload
