@@ -93,7 +93,7 @@ For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add 
 
 Many of the functions in crux started life as blog posts on
 [Emacs Redux](https://emacsredux.com), then were included in
-[prelude](https://www.github.com/bbatsov/prelude), before finally
+[Emacs Prelude](https://www.github.com/bbatsov/prelude), before finally
 being [extracted](https://emacsredux.com/blog/2016/01/30/crux/)
 to crux. You can see a full list of blog posts on functions
 in crux on the [tags page](https://emacsredux.com/tags/#crux).
