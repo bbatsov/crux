@@ -135,11 +135,12 @@ expected name of the shell buffer."
   :type 'symbol
   :group 'crux)
 
-(defcustom crux-should-move-visually
+(defcustom crux-move-visually
   nil
-  "Wheter moves should take visual lines into account or not."
+  "Wheter move-related commands should take visual lines into account or not."
   :type 'boolean
-  :group 'crux)
+  :group 'crux
+  :package-version '(crux . "0.4.0"))
 
 (defun crux-ansi-term (buffer-name)
   "Use ansi-term for `crux-visit-term-buffer'"
@@ -314,7 +315,7 @@ Deletes whitespace at join."
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
 
-  (if crux-should-move-visually
+  (if crux-move-visually
       (beginning-of-visual-line nil)
     (move-beginning-of-line nil))
 
