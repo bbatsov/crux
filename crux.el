@@ -292,7 +292,7 @@ With a prefix ARG open line above the current line."
 Passes ARG to command `kill-whole-line' when provided."
   (interactive "p")
   (kill-whole-line arg)
-  (move-to-mode-line-start))
+  (crux-move-to-mode-line-start))
 
 ;;;###autoload
 (defun crux-kill-line-backwards ()
@@ -311,7 +311,7 @@ Deletes whitespace at join."
       (delete-indentation 1)
     (kill-line arg)))
 
-(defun move-to-mode-line-start ()
+(defun crux-move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
 
@@ -345,7 +345,7 @@ point reaches the beginning or end of the buffer, stop there."
       (forward-line (1- arg))))
 
   (let ((orig-point (point)))
-    (move-to-mode-line-start)
+    (crux-move-to-mode-line-start)
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
