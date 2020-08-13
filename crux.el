@@ -661,6 +661,16 @@ Doesn't mess with special buffers."
      (delete (current-buffer) (seq-filter #'buffer-file-name (buffer-list))))))
 
 ;;;###autoload
+(defun crux-kill-buffer-truename ()
+  "Kill absolute path of file visited in current buffer."
+  (interactive)
+  (if buffer-file-name
+      (let ((truename (file-truename buffer-file-name)))
+        (kill-new truename)
+        (message "Added %s to kill ring." truename))
+    (message "Buffer is not visiting a file.")))
+
+;;;###autoload
 (defun crux-create-scratch-buffer ()
   "Create a new scratch buffer."
   (interactive)
