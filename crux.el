@@ -246,7 +246,7 @@ Position the cursor at its beginning, according to the current mode."
   (if electric-indent-inhibit
       ;; We can't use `indent-according-to-mode' in languages like Python,
       ;; as there are multiple possible indentations with different meanings.
-      (let* ((indent-end (progn (move-to-mode-line-start) (point)))
+      (let* ((indent-end (progn (crux-move-to-mode-line-start) (point)))
              (indent-start (progn (move-beginning-of-line nil) (point)))
              (indent-chars (buffer-substring indent-start indent-end)))
         (forward-line -1)
