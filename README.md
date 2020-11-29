@@ -5,8 +5,21 @@
 # crux
 
 A **C**ollection of **R**idiculously **U**seful e**X**tensions for Emacs.
-crux bundles a few useful interactive commands to enhance your
+crux bundles many useful interactive commands to enhance your
 overall Emacs experience.
+
+Most of the crux commands are related to the editing experience, but
+there are also a bunch of utility commands that are just very useful
+to have (e.g. `crux-open-with` and `crux-reopen-as-root`).
+
+## Origins of crux
+
+Many of the functions in crux started life as blog posts on
+[Emacs Redux](https://emacsredux.com), then were included in
+[Emacs Prelude](https://www.github.com/bbatsov/prelude), before finally
+being [extracted](https://emacsredux.com/blog/2016/01/30/crux/)
+to crux. You can see a full list of blog posts on functions
+in crux on the [tags page](https://emacsredux.com/tags/#crux).
 
 ## Installation
 
@@ -21,7 +34,11 @@ You can install `crux` using the following command:
 
 <kbd>M-x package-install [RET] crux [RET]</kbd>
 
-or if you'd rather keep it in your dotfiles:
+If the installation doesn't work try refreshing the package list:
+
+<kbd>M-x package-refresh-contents</kbd>
+
+Alternatively, you can add the following code to your Emacs config:
 
 ```el
 (unless (package-installed-p 'crux)
@@ -29,13 +46,15 @@ or if you'd rather keep it in your dotfiles:
   (package-install 'crux))
 ```
 
-If the installation doesn't work try refreshing the package list:
-
-<kbd>M-x package-refresh-contents</kbd>
-
 ## Keybindings
 
 crux doesn't setup any keybindings for its commands out-of-the-box.
+There are several reasons for this:
+
+* Most users probably won't need all the commands, so it'd be an overkill to
+define a minor mode consuming a lot of valuable keybindings
+* Many of the optimal keybindings are in the user space anyways (e.g. `C-c some-letter`)
+* Everyone has their own preferences when it comes to keybindings
 
 Here's the list of some suggested keybindings. Feel free to bind
 individual commands to whatever keybindings you prefer.
@@ -91,15 +110,6 @@ For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add 
 (setq save-abbrevs 'silently)
 (setq-default abbrev-mode t)
 ```
-
-## Origins of crux
-
-Many of the functions in crux started life as blog posts on
-[Emacs Redux](https://emacsredux.com), then were included in
-[Emacs Prelude](https://www.github.com/bbatsov/prelude), before finally
-being [extracted](https://emacsredux.com/blog/2016/01/30/crux/)
-to crux. You can see a full list of blog posts on functions
-in crux on the [tags page](https://emacsredux.com/tags/#crux).
 
 ## Using the bundled advices
 
