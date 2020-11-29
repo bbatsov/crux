@@ -146,6 +146,8 @@ expected name of the shell buffer."
   "Use ansi-term for `crux-visit-term-buffer'"
   (ansi-term crux-shell buffer-name))
 
+(defvar eshell-buffer-name)
+
 (defun crux-eshell (buffer-name)
   "Use eshell for `crux-visit-term-buffer'"
   (let ((eshell-buffer-name (format "*%s*" buffer-name)))
@@ -542,7 +544,6 @@ See `file-attributes' for more info."
 (defun crux-find-alternate-file-as-root (filename)
   "Wraps `find-alternate-file' with opening FILENAME as root."
   (let ((remote-method (file-remote-p default-directory 'method))
-        (remote-user (file-remote-p default-directory 'user))
         (remote-host (file-remote-p default-directory 'host))
         (remote-localname (file-remote-p filename 'localname)))
     (find-alternate-file (format "/%s:root@%s:%s"
