@@ -412,7 +412,7 @@ there's a region, all lines that region covers will be duplicated."
   (let ((filename (buffer-file-name)))
     (if (not (and filename (file-exists-p filename)))
         (rename-buffer (read-from-minibuffer "New name: " (buffer-name)))
-      (let* ((new-name (read-from-minibuffer "New name: " filename))
+      (let* ((new-name (read-file-name "New name: " (file-name-directory filename)))
              (containing-dir (file-name-directory new-name)))
         (make-directory containing-dir t)
         (cond
