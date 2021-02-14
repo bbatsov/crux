@@ -313,6 +313,7 @@ Deletes whitespace at join."
       (delete-indentation 1)
     (kill-line arg)))
 
+;;;###autoload
 (defun crux-move-to-mode-line-start ()
   "Move to the beginning, skipping mode specific line start regex."
   (interactive)
