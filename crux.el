@@ -49,13 +49,13 @@
 (defcustom crux-indent-sensitive-modes
   '(conf-mode coffee-mode haml-mode python-mode slim-mode yaml-mode)
   "Modes for which auto-indenting is suppressed."
-  :type 'list
+  :type '(repeat symbol)
   :group 'crux)
 
 (defcustom crux-untabify-sensitive-modes
   '(makefile-bsdmake-mode)
   "Modes for which untabify is suppressed."
-  :type 'list
+  :type '(repeat symbol)
   :group 'crux)
 
 (defcustom crux-line-start-regex-alist
@@ -71,7 +71,7 @@ found, use the regex specified by the default key.
 
 Used by crux functions like `crux-move-beginning-of-line' to skip
 over whitespace, prompts, and markup at the beginning of the line."
-  :type 'list
+  :type '(repeat (cons symbol regexp))
   :group 'crux)
 
 
@@ -86,7 +86,7 @@ over whitespace, prompts, and markup at the beginning of the line."
     "/etc/zlogout" "$ZDOTDIR/.zshrc" "$ZDOTDIR/.zlogin" "$ZDOTDIR/.zprofile"
     "$ZDOTIR/.zshenv" "$ZDOTDIR/.zlogout")
   "The default init files of zsh."
-  :type 'list
+  :type '(repeat string)
   :group 'crux)
 
 (defcustom crux-shell-bash-init-files
@@ -94,26 +94,26 @@ over whitespace, prompts, and markup at the beginning of the line."
     "$HOME/.profile" "$HOME/.bash_logout" "/etc/bashrc" "/etc/bash_profile"
     "/etc/bash_login" "/etc/profile" "/etc/bash_logout")
   "The default init files of bash."
-  :type 'list
+  :type '(repeat string)
   :group 'crux)
 
 (defcustom crux-shell-tcsh-init-files
   '("$HOME/.login" "$HOME/.cshrc" "$HOME/.tcshrc" "$HOME/.logout"
     "/etc/csh.cshrc" "/etc/csh.login" "/etc/csh.logout")
   "The default init files of tcsh."
-  :type 'list
+  :type '(repeat string)
   :group 'crux)
 
 (defcustom crux-shell-fish-init-files
   '("$HOME/.config/fish/config.fish" "$XDG_CONFIG_HOME/fish/config.fish")
   "The default init files of fish."
-  :type 'list
+  :type '(repeat string)
   :group 'crux)
 
 (defcustom crux-shell-ksh-init-files
   '("$HOME/.profile" "$ENV" "/etc/profile")
   "The default init files of ksh."
-  :type 'list
+  :type '(repeat string)
   :group 'crux)
 
 
@@ -123,7 +123,7 @@ over whitespace, prompts, and markup at the beginning of the line."
 
 It will be called with a two arguments: the shell to start and the
 expected name of the shell buffer."
-  :type 'symbol
+  :type 'function
   :group 'crux)
 
 (defcustom crux-shell-func
@@ -132,7 +132,7 @@ expected name of the shell buffer."
 
 It will be called with a two arguments: the shell to start and the
 expected name of the shell buffer."
-  :type 'symbol
+  :type 'function
   :group 'crux)
 
 (defcustom crux-move-visually
