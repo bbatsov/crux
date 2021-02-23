@@ -606,16 +606,25 @@ as the current user."
   (insert (format-time-string "%c" (current-time))))
 
 ;;;###autoload
-(defun crux-recentf-find-file ()
-  "Find a recent file using `completing-read'."
+(defun crux-recentf-find-file (&optional filter)
+  "Find a recent file using `completing-read'.
+When optional argument FILTER is a function, it is used to
+transform recent files before completion."
   (interactive)
-  (let ((file (completing-read "Choose recent file: "
-                               (mapcar #'abbreviate-file-name recentf-list)
-                               nil t)))
+  (let* ((filter (if (functionp filter) filter #'abbreviate-file-name))
+         (file (completing-read "Choose recent file: "
+                                (delete-dups (mapcar filter recentf-list))
+                                nil t)))
     (when file
       (find-file file))))
 
 (define-obsolete-function-alias 'crux-recentf-ido-find-file 'crux-recentf-find-file "0.4.0")
+
+;;;###autoload
+(defun crux-recentf-find-directory ()
+  "Find a recent directory using `completing-read'."
+  (interactive)
+  (crux-recentf-find-file (lambda (file) (abbreviate-file-name (file-name-directory file)))))
 
 ;; modified from https://www.emacswiki.org/emacs/TransposeWindows
 ;;;###autoload
