@@ -222,7 +222,7 @@ If the process in that buffer died, ask to restart."
                              (apply crux-shell-func (list crux-shell-buffer-name)))
                            (format "*%s*" crux-shell-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
-             (not (eq major-mode 'eshell)) ; eshell has no process
+             (not (eq major-mode 'eshell-mode)) ; eshell has no process
              (y-or-n-p "The process has died.  Do you want to restart it? "))
     (kill-buffer-and-window)
     (crux-visit-shell-buffer)))
