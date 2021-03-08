@@ -490,7 +490,9 @@ When invoke with C-u, the newly created file will be visited.
 (defun crux-view-url ()
   "Open a new buffer containing the contents of URL."
   (interactive)
-  (let* ((default (thing-at-point-url-at-point))
+  (let* ((default (if (eq major-mode 'org-mode)
+                      (org-element-property :raw-link (org-element-context))
+                    (thing-at-point-url-at-point)))
          (url (read-from-minibuffer "URL: " default)))
     (switch-to-buffer (url-retrieve-synchronously url))
     (rename-buffer url t)
