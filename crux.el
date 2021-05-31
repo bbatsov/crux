@@ -39,6 +39,8 @@
 (require 'tramp)
 
 (declare-function dired-get-file-for-visit "dired")
+(declare-function org-element-property "org-element")
+(declare-function org-element-context "org-element")
 (defvar recentf-list)
 
 (defgroup crux nil
