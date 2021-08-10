@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 0.4.0 (2021-08-10)
+
 ### New features
 
 * [#65](https://github.com/bbatsov/crux/pull/65): Add a configuration option to move using visual lines in `crux-move-to-mode-line-start`.

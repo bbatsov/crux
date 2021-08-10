@@ -1,10 +1,10 @@
 ;;; crux.el --- A Collection of Ridiculously Useful eXtensions -*- lexical-binding: t -*-
 ;;
-;; Copyright © 2015-2020 Bozhidar Batsov
+;; Copyright © 2015-2021 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/crux
-;; Version: 0.4.0-snapshot
+;; Version: 0.4.0
 ;; Keywords: convenience
 ;; Package-Requires: ((seq "1.11"))
 
