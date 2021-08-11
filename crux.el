@@ -2,7 +2,7 @@
 ;;
 ;; Copyright © 2015-2021 Bozhidar Batsov
 ;;
-;; Author: Bozhidar Batsov <bozhidar@batsov.com>
+;; Author: Bozhidar Batsov <bozhidar@batsov.dev>
 ;; URL: https://github.com/bbatsov/crux
 ;; Version: 0.4.0
 ;; Keywords: convenience
