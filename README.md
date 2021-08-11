@@ -155,7 +155,7 @@ automatically opened as root.
 
 ## License
 
-Copyright © 2015-2020 Bozhidar Batsov and [contributors][].
+Copyright © 2015-2021 Bozhidar Batsov and [contributors][].
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
