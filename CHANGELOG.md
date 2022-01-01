@@ -1,6 +1,7 @@
 # Changelog
 
 ## master (unreleased)
+* More robust `crux-rename-file-and-buffer`.
 
 ## 0.4.0 (2021-08-10)
 

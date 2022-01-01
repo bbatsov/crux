@@ -37,6 +37,7 @@
 (require 'thingatpt)
 (require 'seq)
 (require 'tramp)
+(require 'subr-x)
 
 (declare-function dired-get-file-for-visit "dired")
 (declare-function org-element-property "org-element")
@@ -413,11 +414,15 @@ there's a region, all lines that region covers will be duplicated."
 (defun crux-rename-file-and-buffer ()
   "Rename current buffer and if the buffer is visiting a file, rename it too."
   (interactive)
-  (let ((filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (rename-buffer (read-from-minibuffer "New name: " (buffer-name)))
-      (let* ((new-name (read-file-name "New name: " (file-name-directory filename)))
-             (containing-dir (file-name-directory new-name)))
+  (when-let* ((filename (buffer-file-name))
+              (new-name (or (read-file-name "New name: " (file-name-directory filename) nil 'confirm)))
+              (containing-dir (file-name-directory new-name)))
+    (when (or (buffer-modified-p) (not (file-exists-p filename)))
+      (if (y-or-n-p "Can't move file before saving. Would you like to save it now?")
+          (save-buffer)))
+    (if (get-file-buffer new-name)
+        (message "Already editing new file name")
+      (progn
         (make-directory containing-dir t)
         (cond
          ((vc-backend filename) (vc-rename-file filename new-name))
