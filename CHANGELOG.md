@@ -1,6 +1,7 @@
 # Changelog
 
 ## master (unreleased)
+* More robust `crux-rename-file-and-buffer`.
 
 * [#94](https://github.com/bbatsov/crux/pull/94): Add `crux-with-region-or-sexp-or-line`.
 
