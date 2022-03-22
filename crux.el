@@ -167,7 +167,7 @@ When in dired mode, open file under the cursor.
 With a prefix ARG always prompt for command to use."
   (interactive "P")
   (let* ((current-file-name
-          (if (eq major-mode 'dired-mode)
+          (if (derived-mode-p 'dired-mode)
               (dired-get-file-for-visit)
             buffer-file-name))
          (open (pcase system-type
@@ -224,7 +224,7 @@ If the process in that buffer died, ask to restart."
                              (apply crux-shell-func (list crux-shell-buffer-name)))
                            (format "*%s*" crux-shell-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
-             (not (eq major-mode 'eshell-mode)) ; eshell has no process
+             (not (derived-mode-p 'eshell-mode)) ; eshell has no process
              (y-or-n-p "The process has died.  Do you want to restart it? "))
     (kill-buffer-and-window)
     (crux-visit-shell-buffer)))
@@ -494,7 +494,7 @@ When invoke with C-u, the newly created file will be visited.
 (defun crux-view-url ()
   "Open a new buffer containing the contents of URL."
   (interactive)
-  (let* ((default (if (eq major-mode 'org-mode)
+  (let* ((default (if (derived-mode-p 'org-mode)
                       (org-element-property :raw-link (org-element-context))
                     (thing-at-point-url-at-point)))
          (url (read-from-minibuffer "URL: " default)))
@@ -589,7 +589,7 @@ buffer is not visiting a file."
 Meant to be used as `find-file-hook'.
 See also `crux-reopen-as-root-mode'."
   (unless (or (tramp-tramp-file-p buffer-file-name)
-              (equal major-mode 'dired-mode)
+              (derived-mode-p 'dired-mode)
               (not (file-exists-p (file-name-directory buffer-file-name)))
               (file-writable-p buffer-file-name)
               (crux-file-owned-by-user-p buffer-file-name))
