@@ -27,5 +27,5 @@
 
 * Fixed extra line issue when duplicating region.
 * Various small fixes that we were too lazy to document properly.
-
+* Fixed `sudo` not found in OpenBSD and Alpine Linux
 ## 0.3.0 (2016-05-31)
