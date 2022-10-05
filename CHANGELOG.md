@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* [#94](https://github.com/bbatsov/crux/pull/94): Add `crux-with-region-or-sexp-or-line`.
+
 ## 0.4.0 (2021-08-10)
 
 ### New features

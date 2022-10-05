@@ -136,6 +136,15 @@ alternately act on the current line if the mark is not active:
 (crux-with-region-or-line comment-or-uncomment-region)
 ```
 
+#### `(crux-with-region-or-sexp-or-line)` ####
+
+Similarly, `crux-with-region-or-sexp-or-line` makes a command that acts on the active region, or else
+the current list (or string), or finally the current line:
+
+```el
+(crux-with-region-or-sexp-or-line kill-region)
+```
+
 #### `(crux-with-region-or-point-to-eol)` ####
 
 Sometimes you might want to act on the point until the end of the

@@ -797,6 +797,16 @@ and the entire buffer (in the absense of a region)."
           (list (region-beginning) (region-end))
         (list (line-beginning-position) (line-beginning-position 2))))))
 
+(defmacro crux-with-region-or-sexp-or-line (func)
+  "When called with no active region, call FUNC on current sexp/string, or line."
+  `(defadvice ,func (before with-region-or-sexp-or-line activate compile)
+     (interactive
+      (cond
+       (mark-active (list (region-beginning) (region-end)))
+       ((in-string-p) (flatten-list (bounds-of-thing-at-point 'string)))
+       ((thing-at-point 'list) (flatten-list (bounds-of-thing-at-point 'list)))
+       (t (list (line-beginning-position) (line-beginning-position 2)))))))
+
 (defmacro crux-with-region-or-point-to-eol (func)
   "When called with no active region, call FUNC from the point to the end of line."
   `(defadvice ,func (before with-region-or-point-to-eol activate compile)
