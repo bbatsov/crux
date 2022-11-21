@@ -1,15 +1,19 @@
 # Changelog
 
 ## master (unreleased)
-* More robust `crux-rename-file-and-buffer`.
 
 * [#94](https://github.com/bbatsov/crux/pull/94): Add `crux-with-region-or-sexp-or-line`.
+* [#92](https://github.com/bbatsov/crux/pull/92): Consider derived modes when checking for major mode (`dired`, `org-mode`, `eshell`).
+
+### Bugs fixed
+
+* More robust `crux-rename-file-and-buffer`.
+* Fix `sudo` not found error in OpenBSD and Alpine Linux (they use `doas`).
 
 ## 0.4.0 (2021-08-10)
 
 ### New features
 
-* [#92](https://github.com/bbatsov/crux/pull/92): Consider derived modes when checking for major mode (dired, org-mode, eshell)
 * [#65](https://github.com/bbatsov/crux/pull/65): Add a configuration option to move using visual lines in `crux-move-to-mode-line-start`.
 * [#72](https://github.com/bbatsov/crux/pull/72): Add `crux-kill-buffer-truename`. Kills path of file visited by current buffer.
 * [#78](https://github.com/bbatsov/crux/pull/78): Add `crux-recentf-find-directory`. Open recently visited directory.
