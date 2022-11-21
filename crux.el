@@ -554,7 +554,9 @@ See `file-attributes' for more info."
         (remote-host (file-remote-p default-directory 'host))
         (remote-localname (file-remote-p filename 'localname)))
     (find-alternate-file (format "/%s:root@%s:%s"
-                                 (or remote-method "sudo")
+                                 (or remote-method (if (executable-find "doas")
+						       "doas"
+						     "sudo"))
                                  (or remote-host "localhost")
                                  (or remote-localname filename)))))
 
@@ -571,7 +573,9 @@ buffer is not visiting a file."
             (remote-host (file-remote-p default-directory 'host))
             (remote-localname (file-remote-p default-directory 'localname)))
         (find-file (format "/%s:root@%s:%s"
-                           (or remote-method "sudo")
+                           (or remote-method (if (executable-find "doas")
+						       "doas"
+						     "sudo"))
                            (or remote-host "localhost")
                            (or remote-localname
                                (read-file-name "Find file (as root): ")))))
