@@ -420,7 +420,11 @@ there's a region, all lines that region covers will be duplicated."
              (containing-dir (file-name-directory new-name)))
         (make-directory containing-dir t)
         (cond
-         ((vc-backend filename) (vc-rename-file filename new-name))
+         ((vc-backend filename)
+          ;; vc-rename-file seems not able to cope with remote filenames?
+          (let ((vc-filename (if (tramp-tramp-file-p filename) (tramp-file-local-name filename) filename))
+                (vc-new-name (if (tramp-tramp-file-p new-name) (tramp-file-local-name filename) new-name)))
+            (vc-rename-file vc-filename vc-new-name)))
          (t
           (rename-file filename new-name t)
           (set-visited-file-name new-name t t)))))))
