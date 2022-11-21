@@ -417,11 +417,12 @@ there's a region, all lines that region covers will be duplicated."
   (when-let* ((filename (buffer-file-name))
               (new-name (or (read-file-name "New name: " (file-name-directory filename) nil 'confirm)))
               (containing-dir (file-name-directory new-name)))
+    ;; make sure the current buffer is saved and backed by some file
     (when (or (buffer-modified-p) (not (file-exists-p filename)))
-      (if (y-or-n-p "Can't move file before saving. Would you like to save it now?")
+      (if (y-or-n-p "Can't move file before saving it.  Would you like to save it now?")
           (save-buffer)))
     (if (get-file-buffer new-name)
-        (message "Already editing new file name")
+        (message "There already exists a buffer named %s" new-name)
       (progn
         (make-directory containing-dir t)
         (cond
