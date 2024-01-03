@@ -9,6 +9,7 @@
 
 * More robust `crux-rename-file-and-buffer`.
 * Fix `sudo` not found error in OpenBSD and Alpine Linux (they use `doas`).
+* More robust `crux-copy-file-preserve-attributes`.
 
 ## 0.4.0 (2021-08-10)
 
