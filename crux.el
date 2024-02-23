@@ -559,8 +559,8 @@ See `file-attributes' for more info."
         (remote-localname (file-remote-p filename 'localname)))
     (find-alternate-file (format "/%s:root@%s:%s"
                                  (or remote-method (if (executable-find "doas")
-						       "doas"
-						     "sudo"))
+                                                       "doas"
+                                                     "sudo"))
                                  (or remote-host "localhost")
                                  (or remote-localname filename)))))
 
@@ -578,8 +578,8 @@ buffer is not visiting a file."
             (remote-localname (file-remote-p default-directory 'localname)))
         (find-file (format "/%s:root@%s:%s"
                            (or remote-method (if (executable-find "doas")
-						       "doas"
-						     "sudo"))
+                                                 "doas"
+                                               "sudo"))
                            (or remote-host "localhost")
                            (or remote-localname
                                (read-file-name "Find file (as root): ")))))
@@ -709,10 +709,10 @@ Doesn't mess with special buffers."
 ;;;###autoload
 (defun crux-find-user-custom-file ()
   "Edit the `custom-file', in another window."
-    (interactive)
-    (if custom-file
-        (find-file-other-window custom-file)
-      (message "No custom file found.")))
+  (interactive)
+  (if custom-file
+      (find-file-other-window custom-file)
+    (message "No custom file found.")))
 
 ;;;###autoload
 (defun crux-find-shell-init-file ()
