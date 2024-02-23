@@ -1,6 +1,6 @@
 ;;; crux.el --- A Collection of Ridiculously Useful eXtensions -*- lexical-binding: t -*-
 ;;
-;; Copyright © 2015-2021 Bozhidar Batsov
+;; Copyright © 2015-2024 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.dev>
 ;; URL: https://github.com/bbatsov/crux
