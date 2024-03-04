@@ -1,8 +1,10 @@
 # Changelog
 
+## master (unreleased)
+
 ## 0.5.0 (2024-02-29)
 
-## master (unreleased)
+### New features
 
 * [#94](https://github.com/bbatsov/crux/pull/94): Add `crux-with-region-or-sexp-or-line`.
 * [#92](https://github.com/bbatsov/crux/pull/92): Consider derived modes when checking for major mode (`dired`, `org-mode`, `eshell`).
