@@ -488,7 +488,7 @@ When invoke with C-u, the newly created file will be visited.
       (unless (or (and dest-dir-missing? (not create-dir?))
                   (and dest-file-exists? (not overwrite-dest-file?)))
         (when (and dest-dir-missing? create-dir?)
-          (make-directory dest-dir))
+          (make-directory dest-dir t))
         (copy-file current-file dest-file overwrite-dest-file? t t t)
         (message "Wrote %s" dest-file)
         (when visit
