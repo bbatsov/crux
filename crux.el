@@ -732,11 +732,26 @@ Doesn't mess with special buffers."
       (find-file-other-window (car candidates)))))
 
 ;;;###autoload
-(defun crux-find-current-directory-dir-locals-file ()
-  "Edit the current directory's `.dir-locals.el' file in another window."
-  (interactive)
-  (find-file-other-window
-   (expand-file-name ".dir-locals.el")))
+(defun crux-find-current-directory-dir-locals-file (find-2)
+  "Edit the `.dir-locals.el' file for the current buffer in another window.
+If prefix arg FIND-2 is set then edit the `.dir-locals-2.el' file instead
+of `.dir-locals.el'. Scans parent directories if the file does not exist in
+the default directory of the current buffer. If not found, create a new,
+empty buffer in the current buffer's default directory, or if there is no
+such directory, in the user's home directory."
+  (interactive "P")
+  (let* ((prefix (if (eq system-type 'ms-dos) "_" "."))
+         (file (concat prefix (if find-2 "dir-locals-2" "dir-locals") ".el"))
+         (starting-dir (or (when (and default-directory
+                                      (file-readable-p default-directory))
+                             default-directory)
+                           (file-truename "~/")))
+         (found-dir (or (locate-dominating-file starting-dir file) starting-dir))
+         (found-file (concat found-dir file)))
+    (find-file-other-window found-file)
+    (if (file-exists-p found-file)
+        (message "Editing existing file %s" found-file)
+      (message "Editing new file %s" found-file))))
 
 ;;;###autoload
 (defun crux-upcase-region (beg end)
