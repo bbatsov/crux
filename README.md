@@ -94,6 +94,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-downcase-region`                              | <kbd>C-x C-l</kbd> | `downcase-region` when `transient-mark-mode` is on and region is active.
 `crux-capitalize-region`                            | <kbd>C-x M-c</kbd> | `capitalize-region` when `transient-mark-mode` is on and region is active.
 `crux-other-window-or-switch-buffer`                | <kbd>M-o</kbd>     | Select other window, or switch to most recent buffer if only one windows.
+`crux-keyboard-quit-dwim`                           | <kbd>C-g</kbd>     | `keyboard-quit` close the minibuffer or completions buffer even without focusing it.
 
 Here's how you'd bind some of the commands to keycombos:
 
@@ -104,6 +105,7 @@ Here's how you'd bind some of the commands to keycombos:
 (global-set-key (kbd "s-r") #'crux-recentf-find-file)
 (global-set-key (kbd "C-<backspace>") #'crux-kill-line-backwards)
 (global-set-key [remap kill-whole-line] #'crux-kill-whole-line)
+(global-set-key [remap keyboard-quit] #'crux-keyboard-quit-dwim)
 ```
 
 For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add this to your config:
