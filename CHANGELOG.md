@@ -10,6 +10,7 @@
 ### Bugs fixed
 
 * Create nonexistent parent directories in `crux-copy-file-preserve-attributes`.
+* Switch from obsolete `defadvice` to `define-advice`.
 
 ## 0.5.0 (2024-02-29)
 

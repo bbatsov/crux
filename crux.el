@@ -840,37 +840,45 @@ abort completely with `C-g'."
 
 Use to make commands like `indent-region' work on both the region
 and the entire buffer (in the absense of a region)."
-  `(defadvice ,func (before with-region-or-buffer activate compile)
-     (interactive
-      (if mark-active
-          (list (region-beginning) (region-end))
-        (list (point-min) (point-max))))))
+  `(define-advice ,func (:around (orig-fun &rest args) with-region-or-buffer)
+     "Run ORIG-FUN on ARGS if provided, else on the region or entire buffer."
+     (apply orig-fun
+            (cond
+             (args args)
+             (mark-active (list (region-beginning) (region-end)))
+             (t (list (point-min) (point-max)))))))
 
 (defmacro crux-with-region-or-line (func)
   "When called with no active region, call FUNC on current line."
-  `(defadvice ,func (before with-region-or-line activate compile)
-     (interactive
-      (if mark-active
-          (list (region-beginning) (region-end))
-        (list (line-beginning-position) (line-beginning-position 2))))))
+  `(define-advice ,func (:around (orig-fun &rest args) with-region-or-line)
+     "Run ORIG-FUN on ARGS if provided, else on the region or current line."
+     (apply orig-fun
+            (cond
+             (args args)
+             (mark-active (list (region-beginning) (region-end)))
+             (t (list (line-beginning-position) (line-beginning-position 2)))))))
 
 (defmacro crux-with-region-or-sexp-or-line (func)
   "When called with no active region, call FUNC on current sexp/string, or line."
-  `(defadvice ,func (before with-region-or-sexp-or-line activate compile)
-     (interactive
-      (cond
-       (mark-active (list (region-beginning) (region-end)))
-       ((in-string-p) (flatten-list (bounds-of-thing-at-point 'string)))
-       ((thing-at-point 'list) (flatten-list (bounds-of-thing-at-point 'list)))
-       (t (list (line-beginning-position) (line-beginning-position 2)))))))
+  `(define-advice ,func (:around (orig-fun &rest args) with-region-or-sexp-or-line)
+     "Run ORIG-FUN on ARGS if provided, else on the region, or current sexp/string, or line."
+     (apply orig-fun
+            (cond
+             (args args)
+             (mark-active (list (region-beginning) (region-end)))
+             ((in-string-p) (flatten-list (bounds-of-thing-at-point 'string)))
+             ((thing-at-point 'list) (flatten-list (bounds-of-thing-at-point 'list)))
+             (t (list (line-beginning-position) (line-beginning-position 2)))))))
 
 (defmacro crux-with-region-or-point-to-eol (func)
   "When called with no active region, call FUNC from the point to the end of line."
-  `(defadvice ,func (before with-region-or-point-to-eol activate compile)
-     (interactive
-      (if mark-active
-          (list (region-beginning) (region-end))
-        (list (point) (line-end-position))))))
+  `(define-advice ,func (:around (orig-fun &rest args) with-region-or-point-to-eol)
+     "Run ORIG-FUN on ARGS if provided, else on the region, or from point to the end of line."
+     (apply orig-fun
+            (cond
+             (args args)
+             (mark-active (list (region-beginning) (region-end)))
+             (t (list (point) (line-end-position)))))))
 
 (provide 'crux)
 ;;; crux.el ends here
