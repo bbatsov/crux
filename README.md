@@ -93,7 +93,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-upcase-region`                                | <kbd>C-x C-u</kbd> | `upcase-region` when `transient-mark-mode` is on and region is active.
 `crux-downcase-region`                              | <kbd>C-x C-l</kbd> | `downcase-region` when `transient-mark-mode` is on and region is active.
 `crux-capitalize-region`                            | <kbd>C-x M-c</kbd> | `capitalize-region` when `transient-mark-mode` is on and region is active.
-`crux-other-window-or-switch-buffer`                | <kbd>M-o</kbd>     | Select other window, or switch to most recent buffer if only one windows.
+`crux-other-window-or-switch-buffer`                | <kbd>M-o</kbd>     | Select other window, or switch to most recent buffer if only one window.
 `crux-keyboard-quit-dwim`                           | <kbd>C-g</kbd>     | `keyboard-quit` close the minibuffer or completions buffer even without focusing it.
 
 Here's how you'd bind some of the commands to keycombos:
@@ -117,7 +117,7 @@ For `crux-ispell-word-then-abbrev` to be most effective you'll also need to add 
 
 ## Using the bundled advices
 
-crux ships with some handy advises that can enhance the operation of existing commands.
+crux ships with some handy advice that can enhance the operation of existing commands.
 
 #### `(crux-with-region-or-buffer)` ####
 

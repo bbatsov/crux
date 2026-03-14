@@ -87,7 +87,7 @@ over whitespace, prompts, and markup at the beginning of the line."
   '("$HOME/.zshrc" "$HOME/.zlogin" "$HOME/.zprofile" "$HOME/.zshenv"
     "$HOME/.zlogout" "/etc/zshenv" "/etc/zprofile" "/etc/zshrc" "/etc/zlogin"
     "/etc/zlogout" "$ZDOTDIR/.zshrc" "$ZDOTDIR/.zlogin" "$ZDOTDIR/.zprofile"
-    "$ZDOTIR/.zshenv" "$ZDOTDIR/.zlogout")
+    "$ZDOTDIR/.zshenv" "$ZDOTDIR/.zlogout")
   "The default init files of zsh."
   :type '(repeat string)
   :group 'crux)
@@ -124,40 +124,40 @@ over whitespace, prompts, and markup at the beginning of the line."
   #'crux-ansi-term
   "The function used to start the term buffer if it's not already running.
 
-It will be called with a two arguments: the shell to start and the
+It will be called with two arguments: the shell to start and the
 expected name of the shell buffer."
   :type 'function
   :group 'crux)
 
 (defcustom crux-shell-func
   #'crux-eshell
-  "The function used to start the term buffer if it's not already running.
+  "The function used to start the shell buffer if it's not already running.
 
-It will be called with a two arguments: the shell to start and the
+It will be called with two arguments: the shell to start and the
 expected name of the shell buffer."
   :type 'function
   :group 'crux)
 
 (defcustom crux-move-visually
   nil
-  "Wheter move-related commands should take visual lines into account or not."
+  "Whether move-related commands should take visual lines into account or not."
   :type 'boolean
   :group 'crux
   :package-version '(crux . "0.4.0"))
 
 (defun crux-ansi-term (buffer-name)
-  "Use ansi-term for `crux-visit-term-buffer'"
+  "Use ansi-term for `crux-visit-term-buffer'."
   (ansi-term crux-shell buffer-name))
 
 (defvar eshell-buffer-name)
 
 (defun crux-eshell (buffer-name)
-  "Use eshell for `crux-visit-term-buffer'"
+  "Use eshell for `crux-visit-shell-buffer'."
   (let ((eshell-buffer-name (format "*%s*" buffer-name)))
     (eshell buffer-name)))
 
 (defun crux-shell (buffer-name)
-  "Use eshell for `crux-visit-term-buffer'"
+  "Use shell for `crux-visit-shell-buffer'."
   (shell (format "*%s*" buffer-name)))
 
 ;;;###autoload
@@ -437,7 +437,7 @@ there's a region, all lines that region covers will be duplicated."
 
 ;;;###autoload
 (defun crux-delete-file-and-buffer ()
-  "Kill the current buffer and deletes the file it is visiting."
+  "Kill the current buffer and delete the file it is visiting."
   (interactive)
   (let ((filename (buffer-file-name)))
     (when filename
@@ -466,7 +466,7 @@ If the current buffer is not a file-visiting file or the
 destination is a non-existent directory but the user has elected
 to not created it, nothing will be done.
 
-When invoke with C-u, the newly created file will be visited.
+When invoked with C-u, the newly created file will be visited.
 "
   (interactive "P")
   (when-let ((current-file (buffer-file-name)))
@@ -839,7 +839,7 @@ abort completely with `C-g'."
   "When called with no active region, call FUNC on current buffer.
 
 Use to make commands like `indent-region' work on both the region
-and the entire buffer (in the absense of a region)."
+and the entire buffer (in the absence of a region)."
   `(defadvice ,func (before with-region-or-buffer activate compile)
      (interactive
       (if mark-active
