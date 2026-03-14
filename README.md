@@ -1,4 +1,5 @@
 [![License GPL 3][badge-license]][copying]
+[![CI](https://github.com/bbatsov/crux/actions/workflows/ci.yml/badge.svg)](https://github.com/bbatsov/crux/actions/workflows/ci.yml)
 [![MELPA][melpa-badge]][melpa-package]
 [![MELPA Stable][melpa-stable-badge]][melpa-stable-package]
 

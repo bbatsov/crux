@@ -24,6 +24,19 @@ try to follow these guidelines when you do so.
 * Update the [changelog][5].
 * Use the same coding conventions as the rest of the project.
 * Verify your Emacs Lisp code with `checkdoc` (<kbd>C-c ? d</kbd>).
+* Make sure the existing tests pass and add new tests for your changes when appropriate.
+  You can run the test suite with [Eldev](https://github.com/emacs-eldev/eldev):
+
+  ```
+  eldev test
+  ```
+
+  You can also run byte-compilation and linting:
+
+  ```
+  eldev byte-compile --warnings-as-errors
+  eldev lint
+  ```
 * Open a [pull request][4] that relates to *only* one subject with a clear title
   and description in grammatically correct, complete sentences.
 
