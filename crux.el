@@ -124,8 +124,8 @@ over whitespace, prompts, and markup at the beginning of the line."
   #'crux-ansi-term
   "The function used to start the term buffer if it's not already running.
 
-It will be called with two arguments: the shell to start and the
-expected name of the shell buffer."
+It will be called with one argument: the expected name of the
+term buffer."
   :type 'function
   :group 'crux)
 
@@ -133,8 +133,8 @@ expected name of the shell buffer."
   #'crux-eshell
   "The function used to start the shell buffer if it's not already running.
 
-It will be called with two arguments: the shell to start and the
-expected name of the shell buffer."
+It will be called with one argument: the expected name of the
+shell buffer."
   :type 'function
   :group 'crux)
 
@@ -464,7 +464,7 @@ overwrite.
 
 If the current buffer is not a file-visiting file or the
 destination is a non-existent directory but the user has elected
-to not created it, nothing will be done.
+to not create it, nothing will be done.
 
 When invoked with C-u, the newly created file will be visited.
 "
@@ -553,7 +553,7 @@ See `file-attributes' for more info."
              (string= remote-user "root")))))
 
 (defun crux-find-alternate-file-as-root (filename)
-  "Wraps `find-alternate-file' with opening FILENAME as root."
+  "Wrap `find-alternate-file' to open FILENAME as root."
   (let ((remote-method (file-remote-p default-directory 'method))
         (remote-host (file-remote-p default-directory 'host))
         (remote-localname (file-remote-p filename 'localname)))
@@ -669,7 +669,7 @@ transform recent files before completion."
 ;;;###autoload
 (defun crux-transpose-windows (arg)
   "Transpose the buffers shown in two windows.
-Prefix ARG determines if the current windows buffer is swapped
+Prefix ARG determines if the current window's buffer is swapped
 with the next or previous window, and the number of
 transpositions to execute in sequence."
   (interactive "p")

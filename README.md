@@ -77,24 +77,31 @@ Command                                             | Suggested Keybinding(s)   
 `crux-duplicate-and-comment-current-line-or-region` | <kbd>C-c M-d</kbd> | Duplicate and comment the current line (or region).
 `crux-rename-file-and-buffer`                       | <kbd>C-c r</kbd> | Rename the current buffer and its visiting file if any.
 `crux-visit-term-buffer`                            | <kbd>C-c t</kbd> | Open a terminal emulator (`ansi-term`).
+`crux-visit-shell-buffer`                           | <kbd>C-c z</kbd> | Open a shell buffer (`eshell`).
 `crux-kill-other-buffers`                           | <kbd>C-c k</kbd> | Kill all open buffers except the one you're currently in.
 `crux-indent-defun`                                 | <kbd>C-M z</kbd> | Indent the definition at point.
 `crux-indent-rigidly-and-copy-to-clipboard`         | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
+`crux-sudo-edit`                                    | <kbd>C-c s</kbd> | Edit currently visited file as root.
 `crux-find-user-init-file`                          | <kbd>C-c I</kbd> | Open user's init file.
 `crux-find-user-custom-file`                        | <kbd>C-c ,</kbd> | Open user's custom file.
 `crux-find-shell-init-file`                         | <kbd>C-c S</kbd> | Open shell's init file.
-`crux-find-current-directory-dir-locals-file`       | <kbd>C-c D</kbd> | Open current directory's `.dir-locals.el` file.
+`crux-find-current-directory-dir-locals-file`       | <kbd>C-c l</kbd> | Open current directory's `.dir-locals.el` file.
 `crux-top-join-line`                                | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                              | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                          | <kbd>C-Backspace</kbd> | Kill line backwards
 `crux-kill-and-join-forward`                        | <kbd>C-S-Backspace</kbd> or <kbd>C-k</kbd> | If at end of line, join with following; otherwise kill line.
-`crux-kill-buffer-truename `                        | <kbd>C-c P</kbd> | Kill absolute path of file visited in current buffer.
+`crux-kill-buffer-truename`                         | <kbd>C-c P</kbd> | Kill absolute path of file visited in current buffer.
 `crux-ispell-word-then-abbrev`                      | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
 `crux-upcase-region`                                | <kbd>C-x C-u</kbd> | `upcase-region` when `transient-mark-mode` is on and region is active.
 `crux-downcase-region`                              | <kbd>C-x C-l</kbd> | `downcase-region` when `transient-mark-mode` is on and region is active.
 `crux-capitalize-region`                            | <kbd>C-x M-c</kbd> | `capitalize-region` when `transient-mark-mode` is on and region is active.
+`crux-switch-to-previous-buffer`                    | <kbd>C-c b</kbd> | Switch to previously open buffer. Repeated calls toggle between the two most recent buffers.
 `crux-other-window-or-switch-buffer`                | <kbd>M-o</kbd>     | Select other window, or switch to most recent buffer if only one window.
-`crux-keyboard-quit-dwim`                           | <kbd>C-g</kbd>     | `keyboard-quit` close the minibuffer or completions buffer even without focusing it.
+`crux-move-beginning-of-line`                       | <kbd>C-a</kbd>     | Move point to first non-whitespace character, or to the beginning of the line.
+`crux-insert-date`                                  | <kbd>C-c d t</kbd> | Insert a timestamp according to locale's date and time format.
+`crux-recompile-init`                               |                                 | Byte-compile all your Emacs init files.
+`crux-create-scratch-buffer`                        |                                 | Create a new scratch buffer.
+`crux-keyboard-quit-dwim`                           | <kbd>C-g</kbd>     | Do-What-I-Mean `keyboard-quit`. Closes the minibuffer or completions buffer even without focusing it.
 
 Here's how you'd bind some of the commands to keycombos:
 
