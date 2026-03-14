@@ -1,0 +1,18 @@
+; -*- mode: emacs-lisp; lexical-binding: t -*-
+
+(eldev-require-version "1.11")
+
+(eldev-use-package-archive 'gnu-elpa)
+(eldev-use-package-archive 'melpa)
+
+(eldev-use-plugin 'autoloads)
+
+(eldev-add-extra-dependencies 'test 'buttercup)
+
+;; configuration for the default linters
+(setq byte-compile-docstring-max-column 120)
+(setq checkdoc-force-docstrings-flag nil)
+(setq checkdoc-permit-comma-termination-flag t)
+(setq checkdoc--interactive-docstring-flag nil)
+
+(setq eldev-project-main-file "crux.el")
