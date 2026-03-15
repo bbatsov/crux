@@ -343,7 +343,20 @@
 
 (describe "crux-with-region-or-buffer"
   (it "is a macro"
-    (expect (macrop 'crux-with-region-or-buffer) :to-be t)))
+    (expect (macrop 'crux-with-region-or-buffer) :to-be t))
+
+  (it "advises a function to operate on the entire buffer when no region is active"
+    (defun crux-test--buffer-fn (beg end)
+      (interactive "r")
+      (upcase-region beg end))
+    (crux-with-region-or-buffer crux-test--buffer-fn)
+    (with-temp-buffer
+      (insert "hello")
+      (goto-char (point-min))
+      ;; No active region — should operate on the whole buffer
+      (call-interactively #'crux-test--buffer-fn)
+      (expect (buffer-string) :to-equal "HELLO"))
+    (advice-remove #'crux-test--buffer-fn #'crux-crux-test--buffer-fn-region-or-buffer)))
 
 (describe "crux-with-region-or-line"
   (it "is a macro"
