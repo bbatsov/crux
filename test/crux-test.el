@@ -10,6 +10,7 @@
 
 (require 'buttercup)
 (require 'crux)
+(require 'recentf)
 
 ;;; Movement
 
@@ -253,6 +254,32 @@
             (expect (current-buffer) :to-be buf1))
         (kill-buffer buf1)
         (kill-buffer buf2)))))
+
+;;; Recent files
+
+(describe "crux-recentf-find-file"
+  (it "enables recentf-mode and offers the recent files"
+    (let ((recentf-mode nil)
+          (recentf-list '("/tmp/a.txt" "/tmp/b.txt"))
+          candidates visited)
+      (cl-letf (((symbol-function 'recentf-mode) (lambda (&rest _) (setq recentf-mode t)))
+                ((symbol-function 'completing-read)
+                 (lambda (_prompt coll &rest _) (setq candidates coll) (car coll)))
+                ((symbol-function 'find-file) (lambda (f &rest _) (setq visited f))))
+        (crux-recentf-find-file))
+      (expect recentf-mode :to-be t)
+      (expect candidates :to-equal '("/tmp/a.txt" "/tmp/b.txt"))
+      (expect visited :to-equal "/tmp/a.txt"))))
+
+(describe "crux-recentf-find-directory"
+  (it "offers the unique directories of recent files"
+    (let ((recentf-mode t)
+          (recentf-list '("/tmp/a.txt" "/tmp/b.txt" "/var/c.txt"))
+          candidates)
+      (cl-letf (((symbol-function 'completing-read)
+                 (lambda (_prompt coll &rest _) (setq candidates coll) nil)))
+        (crux-recentf-find-directory))
+      (expect candidates :to-equal '("/tmp/" "/var/")))))
 
 ;;; File path
 

@@ -42,6 +42,7 @@
 (declare-function org-element-property "org-element")
 (declare-function org-element-context "org-element")
 (defvar recentf-list)
+(defvar recentf-mode)
 
 (defgroup crux nil
   "crux configuration."
@@ -670,8 +671,12 @@ The DWIM behaviour of this command is as follows:
 (defun crux-recentf-find-file (&optional filter)
   "Find a recent file using `completing-read'.
 When optional argument FILTER is a function, it is used to
-transform recent files before completion."
+transform recent files before completion.
+Enable `recentf-mode' if it isn't already."
   (interactive)
+  (require 'recentf)
+  (unless recentf-mode
+    (recentf-mode 1))
   (let* ((filter (if (functionp filter) filter #'abbreviate-file-name))
          (file (completing-read "Choose recent file: "
                                 (delete-dups (mapcar filter recentf-list))
