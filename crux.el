@@ -195,10 +195,14 @@ With a prefix ARG always prompt for command to use."
 (defvar crux-term-buffer-name "ansi-term"
   "The default buffer name used by `crux-visit-term-buffer'.
 This variable can be set via .dir-locals.el to provide multi-term support.")
+;;;###autoload
+(put 'crux-term-buffer-name 'safe-local-variable #'stringp)
 
 (defvar crux-shell-buffer-name "shell"
   "The default buffer name used by `crux-visit-shell-buffer'.
 This variable can be set via .dir-locals.el to provide multi-term support.")
+;;;###autoload
+(put 'crux-shell-buffer-name 'safe-local-variable #'stringp)
 
 (defun crux-start-or-switch-to (function buffer-name)
   "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
