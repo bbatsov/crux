@@ -320,7 +320,15 @@
       (insert "(+ 1 2)")
       (goto-char (point-max))
       (crux-eval-and-replace)
-      (expect (buffer-string) :to-equal "3"))))
+      (expect (buffer-string) :to-equal "3")))
+
+  (it "evaluates with lexical binding in lexical-binding buffers"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (setq lexical-binding t)
+      (insert "(funcall (let ((x 1)) (lambda () x)))")
+      (crux-eval-and-replace)
+      (expect (buffer-string) :to-equal "1"))))
 
 ;;; Cleanup
 

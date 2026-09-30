@@ -544,7 +544,7 @@ the respective step."
 (defun crux-eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
-  (let ((value (eval (elisp--preceding-sexp))))
+  (let ((value (eval (elisp--preceding-sexp) lexical-binding)))
     (backward-kill-sexp)
     (insert (format "%S" value))))
 
