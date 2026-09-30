@@ -367,49 +367,53 @@ point reaches the beginning or end of the buffer, stop there."
     (indent-region (region-beginning) (region-end))))
 
 (defun crux-get-positions-of-line-or-region ()
-  "Return positions (beg . end) of the current line or region."
-  (let (beg end)
-    (if (and mark-active (> (point) (mark)))
-        (exchange-point-and-mark))
-    (setq beg (line-beginning-position))
-    (if mark-active
-        (exchange-point-and-mark))
-    (setq end (line-end-position))
-    (cons beg end)))
+  "Return positions (beg . end) of the current line or region.
+With an active region, cover all the lines it touches.  A region
+ending at the very beginning of a line doesn't include that line."
+  (if (use-region-p)
+      (let ((beg (region-beginning))
+            (end (region-end)))
+        (save-excursion
+          (goto-char end)
+          (when (and (bolp) (> end beg))
+            (backward-char))
+          (setq end (line-end-position))
+          (goto-char beg)
+          (cons (line-beginning-position) end)))
+    (cons (line-beginning-position) (line-end-position))))
+
+(defun crux--duplicate-line-or-region (arg &optional comment)
+  "Duplicate the current line or region ARG times.
+When COMMENT is non-nil, comment out the original text.  Point ends
+up in the last copy, at the same relative position."
+  (pcase-let* ((origin (point))
+               (`(,beg . ,end) (crux-get-positions-of-line-or-region))
+               (text (buffer-substring-no-properties beg end))
+               (offset (min (- origin beg) (length text))))
+    (when (> arg 0)
+      (when comment
+        (setq end (copy-marker end t))
+        (comment-region beg end))
+      (goto-char end)
+      (dotimes (_ arg)
+        (insert "\n" text))
+      (goto-char (+ (- (point) (length text)) offset)))))
 
 ;;;###autoload
 (defun crux-duplicate-current-line-or-region (arg)
-  "Duplicates the current line or region ARG times.
+  "Duplicate the current line or region ARG times.
 If there's no region, the current line will be duplicated.  However, if
 there's a region, all lines that region covers will be duplicated."
   (interactive "p")
-  (pcase-let* ((origin (point))
-               (`(,beg . ,end) (crux-get-positions-of-line-or-region))
-               (region (buffer-substring-no-properties beg end)))
-    (dotimes (_i arg)
-      (goto-char end)
-      (newline)
-      (insert region)
-      (setq end (point)))
-    (goto-char (+ origin (* (length region) arg) arg))))
+  (crux--duplicate-line-or-region arg))
 
 ;;;###autoload
 (defun crux-duplicate-and-comment-current-line-or-region (arg)
-  "Duplicates and comments the current line or region ARG times.
+  "Duplicate the current line or region ARG times, commenting out the original.
 If there's no region, the current line will be duplicated.  However, if
 there's a region, all lines that region covers will be duplicated."
   (interactive "p")
-  (pcase-let* ((origin (point))
-               (`(,beg . ,end) (crux-get-positions-of-line-or-region))
-               (region (buffer-substring-no-properties beg end)))
-    (comment-or-uncomment-region beg end)
-    (setq end (line-end-position))
-    (dotimes (_ arg)
-      (goto-char end)
-      (newline)
-      (insert region)
-      (setq end (point)))
-    (goto-char (+ origin (* (length region) arg) arg))))
+  (crux--duplicate-line-or-region arg t))
 
 ;;;###autoload
 (defun crux-rename-file-and-buffer ()
