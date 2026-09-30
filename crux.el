@@ -6,7 +6,7 @@
 ;; URL: https://github.com/bbatsov/crux
 ;; Version: 0.6.0-snapshot
 ;; Keywords: convenience
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "28.1"))
 
 ;; This file is not part of GNU Emacs.
 
