@@ -657,9 +657,37 @@ buffer is not visiting a file."
         (crux-find-alternate-file-as-root buffer-file-name)
         (goto-char place)))))
 
+(defun crux--emacs-file-p (filename)
+  "Return non-nil if FILENAME belongs to Emacs or a package on `load-path'.
+That covers the Lisp and C sources `find-function' and friends visit,
+also when they're reached through a symlink."
+  (let ((roots (list
+                ;; the installation directory, which holds lisp/ and etc/
+                (file-name-directory (directory-file-name data-directory))
+                source-directory))
+        (lisp-dirs (mapcar #'file-name-as-directory
+                           (seq-filter (lambda (dir)
+                                         (and dir (file-name-absolute-p dir)))
+                                       load-path))))
+    (seq-some
+     (lambda (file)
+       (let ((dir (file-name-directory file)))
+         (or (seq-some (lambda (root)
+                         (and root (string-prefix-p
+                                    (file-name-as-directory (expand-file-name root))
+                                    dir)))
+                       roots)
+             (seq-some (lambda (lisp-dir)
+                         (string= dir (expand-file-name lisp-dir)))
+                       lisp-dirs))))
+     (list (expand-file-name filename) (file-truename filename)))))
+
 ;;;###autoload
 (defun crux-reopen-as-root ()
   "Find file as root if necessary.
+
+Files belonging to Emacs itself or to packages on `load-path' are
+left alone, as they're usually visited just to read them.
 
 Meant to be used as `find-file-hook'.
 See also `crux-reopen-as-root-mode'."
@@ -667,14 +695,16 @@ See also `crux-reopen-as-root-mode'."
               (derived-mode-p 'dired-mode)
               (not (file-exists-p (file-name-directory buffer-file-name)))
               (file-writable-p buffer-file-name)
-              (crux-file-owned-by-user-p buffer-file-name))
+              (crux-file-owned-by-user-p buffer-file-name)
+              (crux--emacs-file-p buffer-file-name))
     (crux-find-alternate-file-as-root buffer-file-name)))
 
 ;;;###autoload
 (define-minor-mode crux-reopen-as-root-mode
   "Automatically reopen files as root when they aren't writable.
 Files that the current user can't write to, and doesn't own, get
-reopened through sudo (or doas) when visited."
+reopened through sudo (or doas) when visited.  Files belonging to
+Emacs itself or to packages on `load-path' are left alone."
   :global t
   :group 'crux
   (if crux-reopen-as-root-mode

@@ -695,6 +695,74 @@
           (crux-sudo-edit)))
       (expect visited :to-equal "/sudo:root@localhost:/etc/hosts"))))
 
+(describe "crux-reopen-as-root"
+  :var (reopened)
+  (before-each
+    (setq reopened nil)
+    (spy-on 'crux-find-alternate-file-as-root
+            :and-call-fake (lambda (f) (setq reopened f))))
+
+  (defun crux-test--reopen (file &rest overrides)
+    "Run `crux-reopen-as-root' for FILE with OVERRIDES of the file checks."
+    (cl-letf (((symbol-function 'file-writable-p)
+               (lambda (_) (plist-get overrides :writable)))
+              ((symbol-function 'crux-file-owned-by-user-p)
+               (lambda (_) (plist-get overrides :owned))))
+      (with-temp-buffer
+        (setq buffer-file-name file)
+        (crux-reopen-as-root))))
+
+  (it "reopens files the user can't write and doesn't own"
+    (crux-test--reopen "/etc/hosts")
+    (expect reopened :to-equal "/etc/hosts"))
+
+  (it "leaves writable files alone"
+    (crux-test--reopen "/etc/hosts" :writable t)
+    (expect reopened :to-be nil))
+
+  (it "leaves files owned by the user alone"
+    (crux-test--reopen "/etc/hosts" :owned t)
+    (expect reopened :to-be nil))
+
+  (it "leaves Emacs's own Lisp files alone"
+    (crux-test--reopen (locate-library "subr"))
+    (expect reopened :to-be nil))
+
+  (it "leaves files under data-directory alone"
+    (crux-test--reopen (expand-file-name "NEWS" data-directory))
+    (expect reopened :to-be nil)))
+
+(describe "crux--emacs-file-p"
+  (it "recognizes files in load-path directories, but not their subdirectories"
+    (let ((load-path '("/opt/emacs/lisp")))
+      (expect (crux--emacs-file-p "/opt/emacs/lisp/subr.el.gz") :to-be-truthy)
+      (expect (crux--emacs-file-p "/opt/emacs/lisp/other/foo.el") :to-be nil)
+      (expect (crux--emacs-file-p "/etc/hosts") :to-be nil)))
+
+  (it "copes with nil and relative load-path entries"
+    (let ((load-path '(nil "." "/opt/emacs/lisp"))
+          (default-directory "/etc/"))
+      (expect (crux--emacs-file-p "/etc/hosts") :to-be nil)))
+
+  (it "covers the whole Emacs installation, including dirs not on load-path"
+    (let ((install-dir (file-name-directory (directory-file-name data-directory))))
+      (expect (crux--emacs-file-p (expand-file-name "lisp/term/xterm.el" install-dir))
+              :to-be-truthy)))
+
+  (it "recognizes files reached through a symlink into a load-path directory"
+    (let* ((dir (file-name-as-directory (make-temp-file "crux-test" t)))
+           (real-dir (expand-file-name "real/" dir))
+           (link-dir (expand-file-name "link" dir)))
+      (unwind-protect
+          (progn
+            (make-directory real-dir)
+            (with-temp-file (expand-file-name "pkg.el" real-dir))
+            (make-symbolic-link real-dir link-dir)
+            (let ((load-path (list (file-truename real-dir))))
+              (expect (crux--emacs-file-p (expand-file-name "pkg.el" link-dir))
+                      :to-be-truthy)))
+        (delete-directory dir t)))))
+
 ;;; Keyboard quit DWIM
 
 (describe "crux-keyboard-quit-dwim"
