@@ -303,7 +303,7 @@
 
   (it "duplicates all the lines touched by the region"
     (with-temp-buffer
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "a\nb\nc")
       (set-mark 2)
       (goto-char 4)
@@ -313,7 +313,7 @@
 
   (it "skips the line the region ends on when it ends at column 0"
     (with-temp-buffer
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "a\nb\nc\n")
       (set-mark (point-min))
       (goto-char 5)
@@ -360,7 +360,7 @@
   (it "comments every line of a multi-line region"
     (with-temp-buffer
       (emacs-lisp-mode)
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "a\nb")
       (set-mark (point-max))
       (goto-char (point-min))
@@ -539,7 +539,7 @@
 
   (it "does nothing when the mark is set but inactive"
     (with-temp-buffer
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "hello")
       (set-mark (point-min))
       (deactivate-mark)
@@ -609,7 +609,7 @@
   (it "leaves text outside the active region alone"
     (with-temp-buffer
       (emacs-lisp-mode)
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "(a)   \n(b)   \n")
       (set-mark (point-min))
       (goto-char 8) ; the whole first line
@@ -620,7 +620,7 @@
   (it "treats an empty active region like no region at all"
     (with-temp-buffer
       (emacs-lisp-mode)
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "(foo\nbar)   \n")
       (set-mark (point))
       (activate-mark)
@@ -874,7 +874,7 @@
 
   (it "deactivates an active region"
     (with-temp-buffer
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "hello world")
       (goto-char (point-min))
       (set-mark (point-min))
@@ -979,7 +979,7 @@
   (it "leaves the mark and region alone"
     (with-temp-buffer
       (emacs-lisp-mode)
-      (transient-mark-mode 1)
+      (setq-local transient-mark-mode t)
       (insert "(defun foo ()\n  (+ 1 2))")
       (goto-char 5)
       (crux-indent-defun)
@@ -1084,7 +1084,7 @@
   (it "uses the region when it is active"
     (crux-test--with-advice crux-with-region-or-buffer
       (with-temp-buffer
-        (transient-mark-mode 1)
+        (setq-local transient-mark-mode t)
         (insert "hello world")
         (set-mark 2)
         (goto-char 5)
