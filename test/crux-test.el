@@ -89,6 +89,25 @@
       (crux-move-to-mode-line-start)
       (expect (current-column) :to-equal 2))))
 
+(describe "crux-start-or-switch-to"
+  (it "calls the function in another window when the buffer doesn't exist"
+    (save-window-excursion
+      (delete-other-windows)
+      (let ((orig (selected-window)) called)
+        (crux-start-or-switch-to (lambda () (setq called t)) "*crux-no-such-buffer*")
+        (expect called :to-be t)
+        (expect (selected-window) :not :to-be orig))))
+
+  (it "switches to an existing buffer without calling the function"
+    (save-window-excursion
+      (let ((buf (get-buffer-create "*crux-existing*")) called)
+        (unwind-protect
+            (progn
+              (crux-start-or-switch-to (lambda () (setq called t)) "*crux-existing*")
+              (expect called :to-be nil)
+              (expect (current-buffer) :to-be buf))
+          (kill-buffer buf))))))
+
 (describe "crux-term-buffer-name and crux-shell-buffer-name"
   (it "are safe to set from dir-locals"
     (expect (safe-local-variable-p 'crux-term-buffer-name "project-term") :to-be-truthy)
