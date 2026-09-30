@@ -167,21 +167,25 @@ shell buffer."
 ;;;###autoload
 (defun crux-open-with (arg)
   "Open visited file in default external program.
-When in dired mode, open file under the cursor.
+When in Dired mode, open file under the cursor.
 
 With a prefix ARG always prompt for command to use."
   (interactive "P")
-  (let* ((current-file-name
-          (if (derived-mode-p 'dired-mode)
-              (dired-get-file-for-visit)
-            buffer-file-name))
-         (open (pcase system-type
-                 (`darwin "open")
-                 ((or `gnu `gnu/linux `gnu/kfreebsd) "xdg-open")))
-         (program (if (or arg (not open))
-                      (read-shell-command "Open current file with: ")
-                    open)))
-    (call-process program nil 0 nil current-file-name)))
+  (let ((file (if (derived-mode-p 'dired-mode)
+                  (dired-get-file-for-visit)
+                buffer-file-name))
+        (open (pcase system-type
+                (`darwin "open")
+                ((or `gnu `gnu/linux `gnu/kfreebsd) "xdg-open"))))
+    (unless file
+      (user-error "Buffer is not visiting a file"))
+    (if (and open (not arg))
+        (call-process open nil 0 nil file)
+      (call-process-shell-command
+       (concat (read-shell-command "Open current file with: ")
+               " "
+               (shell-quote-argument file))
+       nil 0))))
 
 (defun crux-buffer-mode (buffer-or-name)
   "Retrieve the `major-mode' of BUFFER-OR-NAME."
