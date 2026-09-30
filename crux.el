@@ -531,13 +531,16 @@ With a prefix argument VISIT, visit the new file in another window."
   (let* ((default (if (derived-mode-p 'org-mode)
                       (org-element-property :raw-link (org-element-context))
                     (thing-at-point-url-at-point)))
-         (url (read-from-minibuffer "URL: " default)))
-    (switch-to-buffer (url-retrieve-synchronously url))
+         (url (read-from-minibuffer "URL: " default))
+         (buffer (or (url-retrieve-synchronously url)
+                     (user-error "Couldn't retrieve %s" url))))
+    (switch-to-buffer buffer)
     (rename-buffer url t)
+    ;; drop the HTTP headers; other protocols don't have any
+    (when (bound-and-true-p url-http-end-of-headers)
+      ;; the marker sits right before the blank line ending the headers
+      (delete-region (point-min) (1+ url-http-end-of-headers)))
     (goto-char (point-min))
-    (re-search-forward "^$")
-    (delete-region (point-min) (point))
-    (delete-blank-lines)
     (set-auto-mode)))
 
 ;;;###autoload
