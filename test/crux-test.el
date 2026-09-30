@@ -551,16 +551,80 @@
 ;;; Configuration file finders
 
 (describe "crux-find-user-init-file"
-  (it "is an interactive command"
-    (expect (commandp #'crux-find-user-init-file) :to-be t)))
+  (it "signals a user error when Emacs was started without an init file"
+    (let ((user-init-file nil))
+      (expect (crux-find-user-init-file) :to-throw 'user-error))))
 
 (describe "crux-find-user-custom-file"
-  (it "is an interactive command"
-    (expect (commandp #'crux-find-user-custom-file) :to-be t)))
+  (it "visits the custom file"
+    (let ((custom-file "/tmp/crux-custom.el")
+          visited)
+      (cl-letf (((symbol-function 'find-file-other-window)
+                 (lambda (f &rest _) (setq visited f))))
+        (crux-find-user-custom-file))
+      (expect visited :to-equal "/tmp/crux-custom.el"))))
 
 (describe "crux-find-shell-init-file"
-  (it "is an interactive command"
-    (expect (commandp #'crux-find-shell-init-file) :to-be t)))
+  :var (dir)
+  (before-each (setq dir (file-name-as-directory (make-temp-file "crux-test" t))))
+  (after-each (delete-directory dir t))
+
+  (it "visits the only existing init file directly"
+    (let ((crux-shell-zsh-init-files (list (concat dir ".zshrc") (concat dir ".zlogin")))
+          visited)
+      (with-temp-file (concat dir ".zshrc"))
+      (cl-letf (((symbol-function 'getenv) (lambda (&rest _) "/bin/zsh"))
+                ((symbol-function 'find-file-other-window)
+                 (lambda (f &rest _) (setq visited f))))
+        (crux-find-shell-init-file))
+      (expect visited :to-equal (concat dir ".zshrc"))))
+
+  (it "prompts when several init files exist"
+    (let ((crux-shell-bash-init-files (list (concat dir ".bashrc") (concat dir ".profile")))
+          candidates)
+      (with-temp-file (concat dir ".bashrc"))
+      (with-temp-file (concat dir ".profile"))
+      (cl-letf (((symbol-function 'getenv) (lambda (&rest _) "/bin/bash"))
+                ((symbol-function 'completing-read)
+                 (lambda (_prompt coll &rest _) (setq candidates coll) (car coll)))
+                ((symbol-function 'find-file-other-window) #'ignore))
+        (crux-find-shell-init-file))
+      (expect candidates :to-equal (list (concat dir ".bashrc") (concat dir ".profile")))))
+
+  (it "signals a user error when no init file exists"
+    (let ((crux-shell-fish-init-files (list (concat dir "config.fish"))))
+      (cl-letf (((symbol-function 'getenv) (lambda (&rest _) "/usr/bin/fish")))
+        (expect (crux-find-shell-init-file) :to-throw 'user-error))))
+
+  (it "signals a user error for unknown shells"
+    (cl-letf (((symbol-function 'getenv) (lambda (&rest _) "/bin/nu")))
+      (expect (crux-find-shell-init-file) :to-throw 'user-error))))
+
+(describe "crux-find-current-directory-dir-locals-file"
+  :var (dir)
+  (before-each (setq dir (file-name-as-directory (make-temp-file "crux-test" t))))
+  (after-each (delete-directory dir t))
+
+  (it "finds the file in a parent directory"
+    (let* ((sub (file-name-as-directory (expand-file-name "a/b" dir)))
+           (default-directory sub)
+           visited)
+      (make-directory sub t)
+      (with-temp-file (expand-file-name ".dir-locals.el" dir))
+      (cl-letf (((symbol-function 'find-file-other-window)
+                 (lambda (f &rest _) (setq visited f))))
+        (crux-find-current-directory-dir-locals-file nil))
+      (expect (expand-file-name visited)
+              :to-equal (expand-file-name ".dir-locals.el" dir))))
+
+  (it "falls back to the current directory, and handles the -2 variant"
+    (let ((default-directory dir)
+          visited)
+      (cl-letf (((symbol-function 'find-file-other-window)
+                 (lambda (f &rest _) (setq visited f))))
+        (crux-find-current-directory-dir-locals-file t))
+      (expect (expand-file-name visited)
+              :to-equal (expand-file-name ".dir-locals-2.el" dir)))))
 
 ;;; Indent
 

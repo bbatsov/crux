@@ -765,6 +765,8 @@ Doesn't mess with special buffers."
 (defun crux-find-user-init-file ()
   "Edit the `user-init-file', in another window."
   (interactive)
+  (unless user-init-file
+    (user-error "No init file was loaded in this session"))
   (find-file-other-window user-init-file))
 
 ;;;###autoload
@@ -779,18 +781,22 @@ Doesn't mess with special buffers."
 (defun crux-find-shell-init-file ()
   "Edit the shell init file in another window."
   (interactive)
-  (let* ((shell (file-name-nondirectory (getenv "SHELL")))
+  (let* ((shell (file-name-nondirectory (or (getenv "SHELL")
+                                             (user-error "SHELL is not set"))))
          (shell-init-file (cond
                            ((string= "zsh" shell) crux-shell-zsh-init-files)
                            ((string= "bash" shell) crux-shell-bash-init-files)
                            ((string= "tcsh" shell) crux-shell-tcsh-init-files)
                            ((string= "fish" shell) crux-shell-fish-init-files)
                            ((string-prefix-p "ksh" shell) crux-shell-ksh-init-files)
-                           (t (error "Unknown shell"))))
-         (candidates (cl-remove-if-not 'file-exists-p (mapcar 'substitute-in-file-name shell-init-file))))
-    (if (> (length candidates) 1)
-        (find-file-other-window (completing-read "Choose shell init file: " candidates))
-      (find-file-other-window (car candidates)))))
+                           (t (user-error "Unknown shell: %s" shell))))
+         (candidates (seq-filter #'file-exists-p
+                                 (mapcar #'substitute-in-file-name shell-init-file))))
+    (pcase candidates
+      ('() (user-error "No %s init files found" shell))
+      (`(,file) (find-file-other-window file))
+      (_ (find-file-other-window
+          (completing-read "Choose shell init file: " candidates nil t))))))
 
 ;;;###autoload
 (defun crux-find-current-directory-dir-locals-file (find-2)
