@@ -299,6 +299,50 @@
         (crux-recentf-find-directory))
       (expect candidates :to-equal '("/tmp/" "/var/")))))
 
+(describe "crux-transpose-windows"
+  (it "swaps the buffers and keeps point in the current buffer"
+    (save-window-excursion
+      (delete-other-windows)
+      (let* ((buf1 (generate-new-buffer "transpose-1"))
+             (buf2 (generate-new-buffer "transpose-2"))
+             (win1 (selected-window))
+             (win2 (split-window)))
+        (unwind-protect
+            (progn
+              (set-window-buffer win1 buf1)
+              (set-window-buffer win2 buf2)
+              (with-current-buffer buf1 (insert "hello world"))
+              (set-window-point win1 7)
+              (crux-transpose-windows 1)
+              (expect (window-buffer win1) :to-be buf2)
+              (expect (window-buffer win2) :to-be buf1)
+              (expect (selected-window) :to-be win2)
+              (expect (window-point win2) :to-equal 7))
+          (kill-buffer buf1)
+          (kill-buffer buf2))))))
+
+(describe "crux-other-window-or-switch-buffer"
+  (it "switches to the other window when there is one"
+    (save-window-excursion
+      (delete-other-windows)
+      (let ((win2 (split-window)))
+        (crux-other-window-or-switch-buffer)
+        (expect (selected-window) :to-be win2))))
+
+  (it "switches to the most recent buffer with a single window"
+    (save-window-excursion
+      (delete-other-windows)
+      (let ((buf1 (generate-new-buffer "owsb-1"))
+            (buf2 (generate-new-buffer "owsb-2")))
+        (unwind-protect
+            (progn
+              (switch-to-buffer buf1)
+              (switch-to-buffer buf2)
+              (crux-other-window-or-switch-buffer)
+              (expect (current-buffer) :to-be buf1))
+          (kill-buffer buf1)
+          (kill-buffer buf2))))))
+
 ;;; File path
 
 (describe "crux-kill-buffer-truename"
