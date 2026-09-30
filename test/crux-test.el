@@ -111,6 +111,25 @@
               (expect (current-buffer) :to-be buf))
           (kill-buffer buf))))))
 
+(describe "crux-visit-term-buffer"
+  (it "offers to restart a terminal whose process died"
+    (save-window-excursion
+      (let ((crux-term-buffer-name "crux-test-term")
+            (starts 0)
+            (answers '(t nil)))
+        (cl-letf* ((crux-term-func (lambda (name)
+                                     (setq starts (1+ starts))
+                                     (switch-to-buffer (get-buffer-create (format "*%s*" name)))))
+                   ((symbol-function 'y-or-n-p) (lambda (&rest _) (pop answers))))
+          (unwind-protect
+              (progn
+                (crux-visit-term-buffer)
+                ;; restarted once after the first yes, then left alone
+                (expect starts :to-equal 2)
+                (expect (buffer-name) :to-equal "*crux-test-term*"))
+            (when (get-buffer "*crux-test-term*")
+              (kill-buffer "*crux-test-term*"))))))))
+
 (describe "crux-term-buffer-name and crux-shell-buffer-name"
   (it "are safe to set from dir-locals"
     (expect (safe-local-variable-p 'crux-term-buffer-name "project-term") :to-be-truthy)
@@ -527,6 +546,29 @@
       (call-interactively #'crux-upcase-region)
       (expect (buffer-string) :to-equal "hello"))))
 
+;;; Spelling
+
+(describe "crux-ispell-word-then-abbrev"
+  (it "fixes the typo and turns it into an abbrev"
+    (with-temp-buffer
+      (let ((local-abbrev-table (make-abbrev-table)))
+        (insert "I saw teh")
+        (cl-letf (((symbol-function 'ispell-word)
+                   (lambda (&rest _)
+                     (let ((bounds (bounds-of-thing-at-point 'word)))
+                       (delete-region (car bounds) (cdr bounds))
+                       (insert "the")
+                       t))))
+          (crux-ispell-word-then-abbrev t))
+        (expect (buffer-string) :to-equal "I saw the")
+        (expect (abbrev-expansion "teh" local-abbrev-table) :to-equal "the"))))
+
+  (it "signals a user error when there's no typo"
+    (with-temp-buffer
+      (insert "all good")
+      (cl-letf (((symbol-function 'ispell-word) #'ignore))
+        (expect (crux-ispell-word-then-abbrev nil) :to-throw 'user-error)))))
+
 ;;; Date insertion
 
 (describe "crux-insert-date"
@@ -813,6 +855,22 @@
           (completion-list-mode)
           (crux-keyboard-quit-dwim)))
       (expect closed :to-be t)))
+
+  (it "aborts the minibuffer from another window"
+    (let (aborted)
+      (cl-letf (((symbol-function 'minibuffer-depth) (lambda () 1))
+                ((symbol-function 'abort-recursive-edit) (lambda () (setq aborted t))))
+        (with-temp-buffer
+          (crux-keyboard-quit-dwim)))
+      (expect aborted :to-be t)))
+
+  (it "falls back to keyboard-quit"
+    (let (quit)
+      (cl-letf (((symbol-function 'minibuffer-depth) (lambda () 0))
+                ((symbol-function 'keyboard-quit) (lambda () (setq quit t))))
+        (with-temp-buffer
+          (crux-keyboard-quit-dwim)))
+      (expect quit :to-be t)))
 
   (it "deactivates an active region"
     (with-temp-buffer
