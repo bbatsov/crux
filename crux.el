@@ -573,6 +573,8 @@ the respective step."
 ;;;###autoload
 (defun crux-recompile-init ()
   "Byte-compile all your dotfiles again."
+  (declare (obsolete "use `byte-compile-file' on the files that need it."
+                     "0.6.0"))
   (interactive)
   (byte-recompile-directory user-emacs-directory 0))
 
