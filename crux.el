@@ -882,58 +882,50 @@ abort completely with `C-g'."
                    bef aft (if p "loc" "glob")))
       (user-error "No typo at or before point"))))
 
+(defmacro crux--advise-with-fallback-region (func suffix bounds)
+  "Advise FUNC to act on the region, or on BOUNDS without one.
+BOUNDS is a form evaluated at call time that returns a list of the
+start and end positions to use.  The advice is named after FUNC
+and SUFFIX, so that it can be removed with `advice-remove'."
+  (let ((advice-name (intern (format "crux-%s-%s" func suffix))))
+    `(progn
+       (defun ,advice-name (orig-fn &rest args)
+         (interactive
+          (if (use-region-p)
+              (list (region-beginning) (region-end))
+            ,bounds))
+         (apply orig-fn args))
+       (advice-add #',func :around #',advice-name))))
+
 (defmacro crux-with-region-or-buffer (func)
   "When called with no active region, call FUNC on current buffer.
 
 Use to make commands like `indent-region' work on both the region
 and the entire buffer (in the absence of a region)."
-  (let ((advice-name (intern (format "crux-%s-region-or-buffer" func))))
-    `(progn
-       (defun ,advice-name (orig-fn &rest args)
-         (interactive
-          (if mark-active
-              (list (region-beginning) (region-end))
-            (list (point-min) (point-max))))
-         (apply orig-fn args))
-       (advice-add #',func :around #',advice-name))))
+  `(crux--advise-with-fallback-region
+    ,func "region-or-buffer"
+    (list (point-min) (point-max))))
 
 (defmacro crux-with-region-or-line (func)
   "When called with no active region, call FUNC on current line."
-  (let ((advice-name (intern (format "crux-%s-region-or-line" func))))
-    `(progn
-       (defun ,advice-name (orig-fn &rest args)
-         (interactive
-          (if mark-active
-              (list (region-beginning) (region-end))
-            (list (line-beginning-position) (line-beginning-position 2))))
-         (apply orig-fn args))
-       (advice-add #',func :around #',advice-name))))
+  `(crux--advise-with-fallback-region
+    ,func "region-or-line"
+    (list (line-beginning-position) (line-beginning-position 2))))
 
 (defmacro crux-with-region-or-sexp-or-line (func)
   "When called with no active region, call FUNC on current sexp/string, or line."
-  (let ((advice-name (intern (format "crux-%s-region-or-sexp-or-line" func))))
-    `(progn
-       (defun ,advice-name (orig-fn &rest args)
-         (interactive
-          (cond
-           (mark-active (list (region-beginning) (region-end)))
-           ((nth 3 (syntax-ppss)) (flatten-list (bounds-of-thing-at-point 'string)))
-           ((thing-at-point 'list) (flatten-list (bounds-of-thing-at-point 'list)))
-           (t (list (line-beginning-position) (line-beginning-position 2)))))
-         (apply orig-fn args))
-       (advice-add #',func :around #',advice-name))))
+  `(crux--advise-with-fallback-region
+    ,func "region-or-sexp-or-line"
+    (cond
+     ((nth 3 (syntax-ppss)) (flatten-list (bounds-of-thing-at-point 'string)))
+     ((thing-at-point 'list) (flatten-list (bounds-of-thing-at-point 'list)))
+     (t (list (line-beginning-position) (line-beginning-position 2))))))
 
 (defmacro crux-with-region-or-point-to-eol (func)
   "When called with no active region, call FUNC from the point to the end of line."
-  (let ((advice-name (intern (format "crux-%s-region-or-point-to-eol" func))))
-    `(progn
-       (defun ,advice-name (orig-fn &rest args)
-         (interactive
-          (if mark-active
-              (list (region-beginning) (region-end))
-            (list (point) (line-end-position))))
-         (apply orig-fn args))
-       (advice-add #',func :around #',advice-name))))
+  `(crux--advise-with-fallback-region
+    ,func "region-or-point-to-eol"
+    (list (point) (line-end-position))))
 
 (provide 'crux)
 ;;; crux.el ends here
