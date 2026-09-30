@@ -49,14 +49,18 @@
   :group 'convenience)
 
 (defcustom crux-indent-sensitive-modes
-  '(conf-mode coffee-mode haml-mode python-mode slim-mode yaml-mode)
-  "Modes for which auto-indenting is suppressed."
+  '(conf-mode coffee-mode haml-mode python-mode python-ts-mode slim-mode
+    yaml-mode yaml-ts-mode)
+  "Modes for which auto-indenting is suppressed.
+Modes derived from these are covered as well."
   :type '(repeat symbol)
-  :group 'crux)
+  :group 'crux
+  :package-version '(crux . "0.6.0"))
 
 (defcustom crux-untabify-sensitive-modes
   '(makefile-bsdmake-mode)
-  "Modes for which untabify is suppressed."
+  "Modes for which untabify is suppressed.
+Modes derived from these are covered as well."
   :type '(repeat symbol)
   :group 'crux)
 
@@ -512,13 +516,25 @@ When invoked with C-u, the newly created file will be visited.
 
 ;;;###autoload
 (defun crux-cleanup-buffer-or-region ()
-  "Cleanup a region if selected, otherwise the whole buffer."
+  "Cleanup a region if selected, otherwise the whole buffer.
+Untabify and reindent the text, then run `whitespace-cleanup'.
+Modes listed in `crux-untabify-sensitive-modes' and
+`crux-indent-sensitive-modes' (and modes derived from them) skip
+the respective step."
   (interactive)
-  (unless (member major-mode crux-untabify-sensitive-modes)
-    (call-interactively #'untabify))
-  (unless (member major-mode crux-indent-sensitive-modes)
-    (call-interactively #'indent-region))
-  (whitespace-cleanup))
+  (let* ((region (use-region-p))
+         (beg (if region (region-beginning) (point-min)))
+         (end (copy-marker (if region (region-end) (point-max)))))
+    (unless (seq-some #'derived-mode-p crux-untabify-sensitive-modes)
+      (untabify beg end))
+    (unless (seq-some #'derived-mode-p crux-indent-sensitive-modes)
+      (indent-region beg end))
+    (if region
+        (whitespace-cleanup-region beg end)
+      ;; `whitespace-cleanup' would restrict itself to an empty active region
+      (let ((mark-active nil))
+        (whitespace-cleanup)))
+    (set-marker end nil)))
 
 ;;;###autoload
 (defun crux-eval-and-replace ()
