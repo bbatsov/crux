@@ -410,28 +410,31 @@ there's a region, all lines that region covers will be duplicated."
 
 ;;;###autoload
 (defun crux-rename-file-and-buffer ()
-  "Rename current buffer and if the buffer is visiting a file, rename it too."
+  "Rename the current buffer and the file it is visiting.
+If the new name is a directory, move the file there, keeping its
+name.  Files under version control are renamed with `vc-rename-file'.
+In a buffer that is not visiting a file, just rename the buffer."
   (interactive)
-  (when-let* ((filename (buffer-file-name))
-              (new-name (or (read-file-name "New name: " (file-name-directory filename) nil 'confirm)))
-              (containing-dir (file-name-directory new-name)))
-    ;; make sure the current buffer is saved and backed by some file
-    (when (or (buffer-modified-p) (not (file-exists-p filename)))
-      (if (y-or-n-p "Can't move file before saving it.  Would you like to save it now?")
-          (save-buffer)))
-    (if (get-file-buffer new-name)
-        (message "There already exists a buffer named %s" new-name)
-      (progn
-        (make-directory containing-dir t)
-        (cond
-         ((vc-backend filename)
-          ;; vc-rename-file seems not able to cope with remote filenames?
-          (let ((vc-filename (if (tramp-tramp-file-p filename) (tramp-file-local-name filename) filename))
-                (vc-new-name (if (tramp-tramp-file-p new-name) (tramp-file-local-name filename) new-name)))
-            (vc-rename-file vc-filename vc-new-name)))
-         (t
+  (if-let* ((filename (buffer-file-name)))
+      (let ((new-name (read-file-name "New name: " (file-name-directory filename) nil 'confirm)))
+        (when (or (directory-name-p new-name) (file-directory-p new-name))
+          (setq new-name (expand-file-name (file-name-nondirectory filename) new-name)))
+        ;; make sure the current buffer is saved and backed by some file
+        (when (or (buffer-modified-p) (not (file-exists-p filename)))
+          (if (y-or-n-p "Can't move file before saving it.  Would you like to save it now? ")
+              (save-buffer)
+            (user-error "Rename aborted")))
+        (when (get-file-buffer new-name)
+          (user-error "There already exists a buffer visiting %s" new-name))
+        (make-directory (file-name-directory new-name) t)
+        (if (vc-backend filename)
+            ;; vc-rename-file seems not able to cope with remote filenames?
+            (let ((vc-filename (if (tramp-tramp-file-p filename) (tramp-file-local-name filename) filename))
+                  (vc-new-name (if (tramp-tramp-file-p new-name) (tramp-file-local-name new-name) new-name)))
+              (vc-rename-file vc-filename vc-new-name))
           (rename-file filename new-name t)
-          (set-visited-file-name new-name t t)))))))
+          (set-visited-file-name new-name t t)))
+    (call-interactively #'rename-buffer)))
 
 (defalias 'crux-rename-buffer-and-file #'crux-rename-file-and-buffer)
 
