@@ -265,17 +265,41 @@
 ;;; Cleanup
 
 (describe "crux-cleanup-buffer-or-region"
-  (it "removes trailing whitespace"
+  (it "cleans up the whole buffer when there's no region"
     (with-temp-buffer
       (emacs-lisp-mode)
-      ;; Set up region covering entire buffer, as the command uses call-interactively
-      (insert "hello   \n")
-      (crux-with-region-or-buffer untabify)
-      (crux-with-region-or-buffer indent-region)
-      (push-mark (point-min) t t)
-      (goto-char (point-max))
+      (insert "(foo\n\t\t\tbar)   \n")
       (crux-cleanup-buffer-or-region)
-      (expect (buffer-string) :to-match "^hello\n"))))
+      (expect (buffer-string) :to-equal "(foo\n bar)\n")))
+
+  (it "leaves text outside the active region alone"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (transient-mark-mode 1)
+      (insert "(a)   \n(b)   \n")
+      (set-mark (point-min))
+      (goto-char 8) ; the whole first line
+      (activate-mark)
+      (crux-cleanup-buffer-or-region)
+      (expect (buffer-string) :to-equal "(a)\n(b)   \n")))
+
+  (it "treats an empty active region like no region at all"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (transient-mark-mode 1)
+      (insert "(foo\nbar)   \n")
+      (set-mark (point))
+      (activate-mark)
+      (crux-cleanup-buffer-or-region)
+      (expect (buffer-string) :to-equal "(foo\n bar)\n")))
+
+  (it "doesn't reindent in modes derived from an indent-sensitive mode"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (insert "(foo\nbar)\n")
+      (let ((crux-indent-sensitive-modes '(lisp-data-mode)))
+        (crux-cleanup-buffer-or-region))
+      (expect (buffer-string) :to-equal "(foo\nbar)\n"))))
 
 ;;; Rename and delete
 
