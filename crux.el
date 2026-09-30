@@ -36,7 +36,6 @@
 
 (require 'thingatpt)
 (require 'seq)
-(require 'tramp)
 (require 'subr-x)
 
 (declare-function dired-get-file-for-visit "dired")
@@ -429,9 +428,7 @@ In a buffer that is not visiting a file, just rename the buffer."
         (make-directory (file-name-directory new-name) t)
         (if (vc-backend filename)
             ;; vc-rename-file seems not able to cope with remote filenames?
-            (let ((vc-filename (if (tramp-tramp-file-p filename) (tramp-file-local-name filename) filename))
-                  (vc-new-name (if (tramp-tramp-file-p new-name) (tramp-file-local-name new-name) new-name)))
-              (vc-rename-file vc-filename vc-new-name))
+            (vc-rename-file (file-local-name filename) (file-local-name new-name))
           (rename-file filename new-name t)
           (set-visited-file-name new-name t t)))
     (call-interactively #'rename-buffer)))
@@ -599,7 +596,7 @@ buffer is not visiting a file."
 
 Meant to be used as `find-file-hook'.
 See also `crux-reopen-as-root-mode'."
-  (unless (or (tramp-tramp-file-p buffer-file-name)
+  (unless (or (file-remote-p buffer-file-name)
               (derived-mode-p 'dired-mode)
               (not (file-exists-p (file-name-directory buffer-file-name)))
               (file-writable-p buffer-file-name)
