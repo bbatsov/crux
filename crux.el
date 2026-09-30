@@ -371,6 +371,11 @@ point reaches the beginning or end of the buffer, stop there."
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
 
+(defun crux--active-region-bounds ()
+  "Return the bounds of the active region as a list, or nil."
+  (when (use-region-p)
+    (list (region-beginning) (region-end))))
+
 (defun crux-get-positions-of-line-or-region ()
   "Return positions (beg . end) of the current line or region.
 With an active region, cover all the lines it touches.  A region
@@ -812,24 +817,30 @@ such directory, in the user's home directory."
       (message "Editing new file %s" found-file))))
 
 ;;;###autoload
-(defun crux-upcase-region (beg end)
-  "`upcase-region' when `transient-mark-mode' is on and region is active."
-  (interactive "*r")
-  (when (use-region-p)
+(defun crux-upcase-region (&optional beg end)
+  "Upcase the text between BEG and END if the region is active.
+Unlike `upcase-region', do nothing without an active region, so it
+is safe to bind to keys that are easy to hit by accident."
+  (interactive (crux--active-region-bounds))
+  (when (and beg end (use-region-p))
     (upcase-region beg end)))
 
 ;;;###autoload
-(defun crux-downcase-region (beg end)
-  "`downcase-region' when `transient-mark-mode' is on and region is active."
-  (interactive "*r")
-  (when (use-region-p)
+(defun crux-downcase-region (&optional beg end)
+  "Downcase the text between BEG and END if the region is active.
+Unlike `downcase-region', do nothing without an active region, so it
+is safe to bind to keys that are easy to hit by accident."
+  (interactive (crux--active-region-bounds))
+  (when (and beg end (use-region-p))
     (downcase-region beg end)))
 
 ;;;###autoload
-(defun crux-capitalize-region (beg end)
-  "`capitalize-region' when `transient-mark-mode' is on and region is active."
-  (interactive "*r")
-  (when (use-region-p)
+(defun crux-capitalize-region (&optional beg end)
+  "Capitalize the text between BEG and END if the region is active.
+Unlike `capitalize-region', do nothing without an active region, so
+it is safe to bind to keys that are easy to hit by accident."
+  (interactive (crux--active-region-bounds))
+  (when (and beg end (use-region-p))
     (capitalize-region beg end)))
 
 ;; http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html

@@ -348,6 +348,22 @@
       (crux-capitalize-region (point-min) (point-max))
       (expect (buffer-string) :to-equal "Hello World"))))
 
+(describe "crux-upcase-region without an active region"
+  (it "does nothing, even if the mark was never set"
+    (with-temp-buffer
+      (insert "hello")
+      (call-interactively #'crux-upcase-region)
+      (expect (buffer-string) :to-equal "hello")))
+
+  (it "does nothing when the mark is set but inactive"
+    (with-temp-buffer
+      (transient-mark-mode 1)
+      (insert "hello")
+      (set-mark (point-min))
+      (deactivate-mark)
+      (call-interactively #'crux-upcase-region)
+      (expect (buffer-string) :to-equal "hello"))))
+
 ;;; Date insertion
 
 (describe "crux-insert-date"
