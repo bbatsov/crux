@@ -280,8 +280,49 @@
 ;;; Rename and delete
 
 (describe "crux-rename-file-and-buffer"
-  (it "has an interactive spec"
-    (expect (commandp #'crux-rename-file-and-buffer) :to-be t)))
+  :var (dir file buf)
+  (before-each
+    (setq dir (file-name-as-directory (make-temp-file "crux-test" t)))
+    (setq file (expand-file-name "old.txt" dir))
+    (with-temp-file file (insert "content"))
+    (setq buf (find-file-noselect file)))
+  (after-each
+    (when (buffer-live-p buf)
+      (with-current-buffer buf (set-buffer-modified-p nil))
+      (kill-buffer buf))
+    (delete-directory dir t))
+
+  (it "renames the file and the buffer"
+    (let ((new (expand-file-name "new.txt" dir)))
+      (with-current-buffer buf
+        (cl-letf (((symbol-function 'read-file-name) (lambda (&rest _) new)))
+          (crux-rename-file-and-buffer))
+        (expect buffer-file-name :to-equal new))
+      (expect (file-exists-p new) :to-be t)
+      (expect (file-exists-p file) :to-be nil)))
+
+  (it "moves the file into a directory, keeping its name"
+    (let ((subdir (file-name-as-directory (expand-file-name "sub" dir))))
+      (with-current-buffer buf
+        (cl-letf (((symbol-function 'read-file-name) (lambda (&rest _) subdir)))
+          (crux-rename-file-and-buffer))
+        (expect buffer-file-name :to-equal (expand-file-name "old.txt" subdir)))))
+
+  (it "aborts when the user declines to save a modified buffer"
+    (let ((new (expand-file-name "new.txt" dir)))
+      (with-current-buffer buf
+        (insert "more")
+        (cl-letf (((symbol-function 'read-file-name) (lambda (&rest _) new))
+                  ((symbol-function 'y-or-n-p) #'ignore))
+          (expect (crux-rename-file-and-buffer) :to-throw 'user-error)))
+      (expect (file-exists-p file) :to-be t)
+      (expect (file-exists-p new) :to-be nil)))
+
+  (it "renames just the buffer when it is not visiting a file"
+    (with-temp-buffer
+      (cl-letf (((symbol-function 'read-string) (lambda (&rest _) "crux-renamed")))
+        (crux-rename-file-and-buffer))
+      (expect (buffer-name) :to-equal "crux-renamed"))))
 
 (describe "crux-delete-file-and-buffer"
   (it "has an interactive spec"
