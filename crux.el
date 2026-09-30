@@ -469,7 +469,7 @@ to not create it, nothing will be done.
 When invoked with C-u, the newly created file will be visited.
 "
   (interactive "P")
-  (when-let ((current-file (buffer-file-name)))
+  (when-let* ((current-file (buffer-file-name)))
     (let* ((input-dest (expand-file-name (read-file-name "Copy file to: ")))
            (input-dest-is-dir? (or (file-directory-p input-dest)
                                    (string-match "/" input-dest (1- (length input-dest)))))
@@ -870,7 +870,7 @@ and the entire buffer (in the absence of a region)."
          (interactive
           (cond
            (mark-active (list (region-beginning) (region-end)))
-           ((in-string-p) (flatten-list (bounds-of-thing-at-point 'string)))
+           ((nth 3 (syntax-ppss)) (flatten-list (bounds-of-thing-at-point 'string)))
            ((thing-at-point 'list) (flatten-list (bounds-of-thing-at-point 'list)))
            (t (list (line-beginning-position) (line-beginning-position 2)))))
          (apply orig-fn args))
