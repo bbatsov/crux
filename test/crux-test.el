@@ -134,7 +134,35 @@
       (insert "hello")
       (goto-char (point-min))
       (crux-duplicate-current-line-or-region 3)
-      (expect (buffer-string) :to-equal "hello\nhello\nhello\nhello"))))
+      (expect (buffer-string) :to-equal "hello\nhello\nhello\nhello")))
+
+  (it "keeps point at the same column in the last copy"
+    (with-temp-buffer
+      (insert "hello\nworld")
+      (goto-char 3)
+      (crux-duplicate-current-line-or-region 2)
+      (expect (line-number-at-pos) :to-equal 3)
+      (expect (current-column) :to-equal 2)))
+
+  (it "duplicates all the lines touched by the region"
+    (with-temp-buffer
+      (transient-mark-mode 1)
+      (insert "a\nb\nc")
+      (set-mark 2)
+      (goto-char 4)
+      (activate-mark)
+      (crux-duplicate-current-line-or-region 1)
+      (expect (buffer-string) :to-equal "a\nb\na\nb\nc")))
+
+  (it "skips the line the region ends on when it ends at column 0"
+    (with-temp-buffer
+      (transient-mark-mode 1)
+      (insert "a\nb\nc\n")
+      (set-mark (point-min))
+      (goto-char 5)
+      (activate-mark)
+      (crux-duplicate-current-line-or-region 1)
+      (expect (buffer-string) :to-equal "a\nb\na\nb\nc\n"))))
 
 (describe "crux-duplicate-and-comment-current-line-or-region"
   (it "duplicates and comments the original line"
@@ -143,13 +171,45 @@
       (insert "hello")
       (goto-char (point-min))
       (crux-duplicate-and-comment-current-line-or-region 1)
-      ;; Original line should be commented, duplicate should not
+      (expect (buffer-string) :to-equal ";; hello\nhello")))
+
+  (it "keeps an already commented original commented"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (insert ";; hello")
       (goto-char (point-min))
-      (expect (buffer-substring (line-beginning-position) (line-end-position))
-              :to-match "^;")
-      (forward-line 1)
-      (expect (buffer-substring (line-beginning-position) (line-end-position))
-              :to-match "^hello"))))
+      (crux-duplicate-and-comment-current-line-or-region 1)
+      (goto-char (point-min))
+      (expect (looking-at-p ";+ *;; hello\n;; hello\\'") :to-be t)))
+
+  (it "puts point in the uncommented copy at the original column"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (insert "hello")
+      (goto-char 3)
+      (crux-duplicate-and-comment-current-line-or-region 1)
+      (expect (line-number-at-pos) :to-equal 2)
+      (expect (current-column) :to-equal 2)))
+
+  (it "puts the copy after the comment terminator in modes that have one"
+    (with-temp-buffer
+      (c-mode)
+      (insert "int a;")
+      (goto-char 3)
+      (crux-duplicate-and-comment-current-line-or-region 1)
+      (expect (buffer-string) :to-equal "/* int a; */\nint a;")
+      (expect (current-column) :to-equal 2)))
+
+  (it "comments every line of a multi-line region"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (transient-mark-mode 1)
+      (insert "a\nb")
+      (set-mark (point-max))
+      (goto-char (point-min))
+      (activate-mark)
+      (crux-duplicate-and-comment-current-line-or-region 1)
+      (expect (buffer-string) :to-equal ";; a\n;; b\na\nb"))))
 
 ;;; Buffer operations
 
