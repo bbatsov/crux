@@ -45,7 +45,7 @@
 (defvar recentf-mode)
 
 (defgroup crux nil
-  "crux configuration."
+  "A Collection of Ridiculously Useful eXtensions."
   :prefix "crux-"
   :group 'convenience)
 
@@ -150,18 +150,21 @@ shell buffer."
   :package-version '(crux . "0.4.0"))
 
 (defun crux-ansi-term (buffer-name)
-  "Use ansi-term for `crux-visit-term-buffer'."
+  "Start `ansi-term' with `crux-shell' in a buffer named BUFFER-NAME.
+The default value of `crux-term-func'."
   (ansi-term crux-shell buffer-name))
 
 (defvar eshell-buffer-name)
 
 (defun crux-eshell (buffer-name)
-  "Use eshell for `crux-visit-shell-buffer'."
+  "Start `eshell' in a buffer named after BUFFER-NAME.
+The default value of `crux-shell-func'."
   (let ((eshell-buffer-name (format "*%s*" buffer-name)))
     (eshell buffer-name)))
 
 (defun crux-shell (buffer-name)
-  "Use shell for `crux-visit-shell-buffer'."
+  "Start `shell' in a buffer named after BUFFER-NAME.
+An alternative value for `crux-shell-func'."
   (shell (format "*%s*" buffer-name)))
 
 ;;;###autoload
@@ -218,7 +221,10 @@ the current buffer."
 ;;;###autoload
 (defun crux-visit-term-buffer ()
   "Create or visit a terminal buffer.
-If the process in that buffer died, ask to restart."
+If the process in that buffer died, ask to restart.
+
+The buffer is named after `crux-term-buffer-name' and started with
+`crux-term-func'."
   (interactive)
   (crux-start-or-switch-to (lambda ()
                              (funcall crux-term-func crux-term-buffer-name))
@@ -231,7 +237,10 @@ If the process in that buffer died, ask to restart."
 ;;;###autoload
 (defun crux-visit-shell-buffer ()
   "Create or visit a shell buffer.
-If the process in that buffer died, ask to restart."
+If the process in that buffer died, ask to restart.
+
+The buffer is named after `crux-shell-buffer-name' and started with
+`crux-shell-func'."
   (interactive)
   (crux-start-or-switch-to (lambda ()
                              (funcall crux-shell-func crux-shell-buffer-name))
@@ -477,10 +486,10 @@ In a buffer that is not visiting a file, just rename the buffer."
   "Copy the current file-visiting buffer's file to a destination.
 
 This function prompts for the new file's location and copies it
-similar to cp -p. If the new location is a directory, and the
+similar to cp -p.  If the new location is a directory, and the
 directory does not exist, this function confirms with the user
-whether it should be created. A directory must end in a slash
-like `copy-file' expects. If the destination is a directory and
+whether it should be created.  A directory must end in a slash
+like `copy-file' expects.  If the destination is a directory and
 already has a file named as the origin file, offers to
 overwrite.
 
@@ -488,8 +497,7 @@ If the current buffer is not a file-visiting file or the
 destination is a non-existent directory but the user has elected
 to not create it, nothing will be done.
 
-When invoked with C-u, the newly created file will be visited.
-"
+With a prefix argument VISIT, visit the new file in another window."
   (interactive "P")
   (when-let* ((current-file (buffer-file-name)))
     (let* ((input-dest (expand-file-name (read-file-name "Copy file to: ")))
@@ -641,8 +649,9 @@ See also `crux-reopen-as-root-mode'."
 
 ;;;###autoload
 (define-minor-mode crux-reopen-as-root-mode
-  "Automatically reopen files as root if we can't write to them
-as the current user."
+  "Automatically reopen files as root when they aren't writable.
+Files that the current user can't write to, and doesn't own, get
+reopened through sudo (or doas) when visited."
   :global t
   :group 'crux
   (if crux-reopen-as-root-mode
@@ -738,7 +747,7 @@ Switch to most recent buffer otherwise."
 
 ;;;###autoload
 (defun crux-kill-other-buffers ()
-  "Kill all buffers but the current one.
+  "Kill all file-visiting buffers but the current one.
 Doesn't mess with special buffers."
   (interactive)
   (when (y-or-n-p "Are you sure you want to kill all buffers but the current one? ")
