@@ -13,6 +13,7 @@
 (require 'recentf)
 
 (defvar tramp-file-name-with-method)
+(defvar url-http-end-of-headers)
 
 ;;; Movement
 
@@ -115,6 +116,44 @@
     (expect (safe-local-variable-p 'crux-term-buffer-name "project-term") :to-be-truthy)
     (expect (safe-local-variable-p 'crux-shell-buffer-name "project-shell") :to-be-truthy)
     (expect (safe-local-variable-p 'crux-term-buffer-name '(evil)) :to-be nil)))
+
+(describe "crux-view-url"
+  (it "shows the response body without the HTTP headers"
+    (let ((response (generate-new-buffer " *crux-http*")))
+      (with-current-buffer response
+        (insert "HTTP/1.1 200 OK\nContent-Type: text/plain\n")
+        (setq-local url-http-end-of-headers (point-marker))
+        (insert "\nhello\n\nworld\n"))
+      (save-window-excursion
+        (cl-letf (((symbol-function 'read-from-minibuffer)
+                   (lambda (&rest _) "https://example.com/crux-test.txt"))
+                  ((symbol-function 'url-retrieve-synchronously)
+                   (lambda (&rest _) response)))
+          (crux-view-url)
+          (unwind-protect
+              (progn
+                (expect (buffer-name) :to-equal "https://example.com/crux-test.txt")
+                (expect (buffer-string) :to-equal "hello\n\nworld\n"))
+            (kill-buffer response))))))
+
+  (it "keeps the whole body for protocols without headers"
+    (let ((response (generate-new-buffer " *crux-file*")))
+      (with-current-buffer response
+        (insert "title\n\nbody\n"))
+      (save-window-excursion
+        (cl-letf (((symbol-function 'read-from-minibuffer)
+                   (lambda (&rest _) "file:///tmp/crux-test.txt"))
+                  ((symbol-function 'url-retrieve-synchronously)
+                   (lambda (&rest _) response)))
+          (crux-view-url)
+          (unwind-protect
+              (expect (buffer-string) :to-equal "title\n\nbody\n")
+            (kill-buffer response))))))
+
+  (it "signals a user error when the URL can't be retrieved"
+    (cl-letf (((symbol-function 'read-from-minibuffer) (lambda (&rest _) "https://nope"))
+              ((symbol-function 'url-retrieve-synchronously) #'ignore))
+      (expect (crux-view-url) :to-throw 'user-error))))
 
 ;;; Line editing
 
