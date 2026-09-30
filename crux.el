@@ -67,8 +67,8 @@ Modes derived from these are covered as well."
 
 (defcustom crux-line-start-regex-alist
   '((term-mode . "^[^#$%>\n]*[#$%>] ")
-    (eshell-mode . "^[^$\n]*$ ")
-    (org-mode . "^\\(\*\\|[[:space:]]*\\)* ")
+    (eshell-mode . "^[^$\n]*\\$ ")
+    (org-mode . "^[*[:space:]]* ")
     (default . "^[[:space:]]*"))
   "Alist of major modes and line starts.
 
