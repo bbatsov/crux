@@ -328,6 +328,52 @@
   (it "has an interactive spec"
     (expect (commandp #'crux-delete-file-and-buffer) :to-be t)))
 
+;;; Root access
+
+(describe "crux--root-file-name"
+  (it "expands ~ as the current user before switching to root"
+    (cl-letf (((symbol-function 'executable-find) #'ignore))
+      (expect (crux--root-file-name "~/notes.txt")
+              :to-equal (concat "/sudo:root@localhost:"
+                                (expand-file-name "~/notes.txt")))))
+
+  (it "prefers doas when it's available"
+    (cl-letf (((symbol-function 'executable-find) (lambda (cmd) (equal cmd "doas"))))
+      (expect (crux--root-file-name "/etc/hosts")
+              :to-equal "/doas:root@localhost:/etc/hosts")))
+
+  (it "adds a sudo hop for remote files, keeping user and port"
+    (expect (crux--root-file-name "/ssh:bob@example.com#2222:/etc/hosts")
+            :to-equal "/ssh:bob@example.com#2222|sudo:root@example.com:/etc/hosts")))
+
+(describe "crux-already-root-p"
+  (it "is nil for local files"
+    (expect (crux-already-root-p "/etc/hosts") :to-be nil))
+
+  (it "recognizes sudo and root file names"
+    (expect (crux-already-root-p "/sudo:root@localhost:/etc/hosts") :to-be-truthy)
+    (expect (crux-already-root-p "/ssh:root@example.com:/etc/hosts") :to-be-truthy)
+    (expect (crux-already-root-p "/ssh:bob@example.com:/etc/hosts") :to-be nil)))
+
+(describe "crux-sudo-edit"
+  (it "prompts for a file when the buffer isn't visiting one"
+    (let (visited)
+      (cl-letf (((symbol-function 'read-file-name) (lambda (&rest _) "/etc/hosts"))
+                ((symbol-function 'executable-find) #'ignore)
+                ((symbol-function 'find-file) (lambda (f &rest _) (setq visited f))))
+        (with-temp-buffer
+          (crux-sudo-edit)))
+      (expect visited :to-equal "/sudo:root@localhost:/etc/hosts")))
+
+  (it "doesn't add another hop to a file that's already opened as root"
+    (let (visited)
+      (cl-letf (((symbol-function 'read-file-name)
+                 (lambda (&rest _) "/sudo:root@localhost:/etc/hosts"))
+                ((symbol-function 'find-file) (lambda (f &rest _) (setq visited f))))
+        (with-temp-buffer
+          (crux-sudo-edit)))
+      (expect visited :to-equal "/sudo:root@localhost:/etc/hosts"))))
+
 ;;; Keyboard quit DWIM
 
 (describe "crux-keyboard-quit-dwim"

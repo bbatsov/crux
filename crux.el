@@ -545,24 +545,33 @@ See `file-attributes' for more info."
   (equal (crux-file-owner-uid filename)
          (user-uid)))
 
-(defun crux-already-root-p ()
-  (let ((remote-method (file-remote-p default-directory 'method))
-        (remote-user (file-remote-p default-directory 'user)))
-    (and remote-method
-         (or (member remote-method '("sudo" "su" "ksu" "doas"))
-             (string= remote-user "root")))))
+(defun crux-already-root-p (&optional filename)
+  "Return non-nil if FILENAME is already being accessed as root.
+FILENAME defaults to `default-directory'."
+  (let* ((filename (or filename default-directory))
+         (method (file-remote-p filename 'method)))
+    (and method
+         (or (member method '("sudo" "su" "ksu" "doas"))
+             (equal (file-remote-p filename 'user) "root")))))
+
+(defun crux--root-file-name (filename)
+  "Return a TRAMP file name for editing FILENAME as root.
+Local files go through doas when it's available and sudo otherwise.
+Remote files get an extra sudo hop on the same host."
+  (let ((filename (expand-file-name filename)))
+    (if-let* ((remote-prefix (file-remote-p filename)))
+        (format "%s|sudo:root@%s:%s"
+                (string-remove-suffix ":" remote-prefix)
+                ;; the port belongs to the outer hop only
+                (car (split-string (file-remote-p filename 'host) "#"))
+                (file-local-name filename))
+      (format "/%s:root@localhost:%s"
+              (if (executable-find "doas") "doas" "sudo")
+              filename))))
 
 (defun crux-find-alternate-file-as-root (filename)
   "Wrap `find-alternate-file' to open FILENAME as root."
-  (let ((remote-method (file-remote-p default-directory 'method))
-        (remote-host (file-remote-p default-directory 'host))
-        (remote-localname (file-remote-p filename 'localname)))
-    (find-alternate-file (format "/%s:root@%s:%s"
-                                 (or remote-method (if (executable-find "doas")
-                                                       "doas"
-                                                     "sudo"))
-                                 (or remote-host "localhost")
-                                 (or remote-localname filename)))))
+  (find-alternate-file (crux--root-file-name filename)))
 
 ;;;###autoload
 (defun crux-sudo-edit (&optional arg)
@@ -573,18 +582,11 @@ Will also prompt for a file to visit if current
 buffer is not visiting a file."
   (interactive "P")
   (if (or arg (not buffer-file-name))
-      (let ((remote-method (file-remote-p default-directory 'method))
-            (remote-host (file-remote-p default-directory 'host))
-            (remote-localname (file-remote-p default-directory 'localname)))
-        (find-file (format "/%s:root@%s:%s"
-                           (or remote-method (if (executable-find "doas")
-                                                 "doas"
-                                               "sudo"))
-                           (or remote-host "localhost")
-                           (or remote-localname
-                               (read-file-name "Find file (as root): ")))))
-
-    (if (crux-already-root-p)
+      (let ((file (read-file-name "Find file (as root): ")))
+        (find-file (if (crux-already-root-p file)
+                       file
+                     (crux--root-file-name file))))
+    (if (crux-already-root-p buffer-file-name)
         (message "Already editing this file as root.")
       (let ((place (point)))
         (crux-find-alternate-file-as-root buffer-file-name)
