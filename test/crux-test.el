@@ -77,6 +77,11 @@
         (crux-move-to-mode-line-start)
         (expect (current-column) :to-equal 8))))
 
+  (it "has a default eshell regexp that skips the prompt"
+    (let ((regexp (alist-get 'eshell-mode crux-line-start-regex-alist)))
+      (expect (string-match regexp "~/src $ ls") :to-equal 0)
+      (expect (match-end 0) :to-equal 8)))
+
   (it "uses the default regexp for other modes"
     (with-temp-buffer
       (emacs-lisp-mode)
