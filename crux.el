@@ -363,7 +363,7 @@ point reaches the beginning or end of the buffer, stop there."
 (defun crux-indent-defun ()
   "Indent the current defun."
   (interactive)
-  (save-excursion
+  (save-mark-and-excursion
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
 

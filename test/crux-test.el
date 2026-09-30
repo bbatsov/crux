@@ -537,7 +537,17 @@
       (insert "(defun foo ()\n(+ 1 2))")
       (goto-char (point-min))
       (crux-indent-defun)
-      (expect (buffer-string) :to-equal "(defun foo ()\n  (+ 1 2))"))))
+      (expect (buffer-string) :to-equal "(defun foo ()\n  (+ 1 2))")))
+
+  (it "leaves the mark and region alone"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (transient-mark-mode 1)
+      (insert "(defun foo ()\n  (+ 1 2))")
+      (goto-char 5)
+      (crux-indent-defun)
+      (expect (mark t) :to-be nil)
+      (expect (region-active-p) :to-be nil))))
 
 ;;; Copy file
 
