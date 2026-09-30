@@ -89,6 +89,12 @@
       (crux-move-to-mode-line-start)
       (expect (current-column) :to-equal 2))))
 
+(describe "crux-term-buffer-name and crux-shell-buffer-name"
+  (it "are safe to set from dir-locals"
+    (expect (safe-local-variable-p 'crux-term-buffer-name "project-term") :to-be-truthy)
+    (expect (safe-local-variable-p 'crux-shell-buffer-name "project-shell") :to-be-truthy)
+    (expect (safe-local-variable-p 'crux-term-buffer-name '(evil)) :to-be nil)))
+
 ;;; Line editing
 
 (describe "crux-smart-open-line"
