@@ -16,6 +16,8 @@
 * [#110](https://github.com/bbatsov/crux/pull/110): `crux-cleanup-buffer-or-region` also skips modes derived from the ones in `crux-indent-sensitive-modes` and `crux-untabify-sensitive-modes`, and the former now includes `python-ts-mode` and `yaml-ts-mode`.
 * [#110](https://github.com/bbatsov/crux/pull/110): `crux-transpose-windows` keeps each window's point and scroll position.
 * [#110](https://github.com/bbatsov/crux/pull/110): Mark `crux-term-buffer-name` and `crux-shell-buffer-name` as safe directory-local variables.
+* [#111](https://github.com/bbatsov/crux/pull/111): Use `tramp-file-name-with-sudo` for remote files in `crux-sudo-edit` and `crux-reopen-as-root-mode` when it's available (Emacs 30.1+), and honor a customized `tramp-file-name-with-method` for local files.
+* [#111](https://github.com/bbatsov/crux/pull/111): Make `crux-reopen-as-root-mode` leave Emacs's own files and packages on `load-path` alone.
 
 ### Bugs fixed
 
@@ -32,6 +34,7 @@
 * [#110](https://github.com/bbatsov/crux/pull/110): Fix `crux-open-with` failing on commands with arguments.
 * [#110](https://github.com/bbatsov/crux/pull/110): Fix the case region commands erroring when the mark was never set.
 * [#110](https://github.com/bbatsov/crux/pull/110): Fix `crux-find-user-init-file` and `crux-find-shell-init-file` crashing when there's no init file.
+* [#111](https://github.com/bbatsov/crux/pull/111): Fix `crux-view-url` erroring on failed fetches and cutting off content for URLs without HTTP headers.
 
 ## 0.5.0 (2024-02-29)
 
