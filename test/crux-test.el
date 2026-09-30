@@ -43,6 +43,24 @@
       (crux-move-beginning-of-line 1)
       (expect (current-column) :to-equal 4))))
 
+;;; External programs
+
+(describe "crux-open-with"
+  (it "signals a user error in buffers without a file"
+    (with-temp-buffer
+      (expect (crux-open-with nil) :to-throw 'user-error)))
+
+  (it "runs the entered command through the shell with the file quoted"
+    (let (command)
+      (cl-letf (((symbol-function 'read-shell-command) (lambda (&rest _) "open -a Preview"))
+                ((symbol-function 'call-process-shell-command)
+                 (lambda (cmd &rest _) (setq command cmd))))
+        (with-temp-buffer
+          (setq buffer-file-name "/tmp/my file.pdf")
+          (crux-open-with t)))
+      (expect command :to-equal
+              (concat "open -a Preview " (shell-quote-argument "/tmp/my file.pdf"))))))
+
 ;;; Line editing
 
 (describe "crux-smart-open-line"
