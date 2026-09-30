@@ -31,4 +31,3 @@ jobs:
       - run: eldev test
 
       - run: eldev lint
-        continue-on-error: true
