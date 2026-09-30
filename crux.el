@@ -217,7 +217,7 @@ the current buffer."
 If the process in that buffer died, ask to restart."
   (interactive)
   (crux-start-or-switch-to (lambda ()
-                             (apply crux-term-func (list crux-term-buffer-name)))
+                             (funcall crux-term-func crux-term-buffer-name))
                            (format "*%s*" crux-term-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
              (y-or-n-p "The process has died.  Do you want to restart it? "))
@@ -230,7 +230,7 @@ If the process in that buffer died, ask to restart."
 If the process in that buffer died, ask to restart."
   (interactive)
   (crux-start-or-switch-to (lambda ()
-                             (apply crux-shell-func (list crux-shell-buffer-name)))
+                             (funcall crux-shell-func crux-shell-buffer-name))
                            (format "*%s*" crux-shell-buffer-name))
   (when (and (null (get-buffer-process (current-buffer)))
              (not (derived-mode-p 'eshell-mode)) ; eshell has no process
@@ -490,7 +490,7 @@ When invoked with C-u, the newly created file will be visited.
   (when-let* ((current-file (buffer-file-name)))
     (let* ((input-dest (expand-file-name (read-file-name "Copy file to: ")))
            (input-dest-is-dir? (or (file-directory-p input-dest)
-                                   (string-match "/" input-dest (1- (length input-dest)))))
+                                   (directory-name-p input-dest)))
            (dest-file (if input-dest-is-dir?
                           (expand-file-name (file-name-nondirectory current-file) input-dest)
                         input-dest))
@@ -568,7 +568,7 @@ the respective step."
   "Return the UID of the FILENAME as an integer.
 
 See `file-attributes' for more info."
-  (nth 2 (file-attributes filename 'integer)))
+  (file-attribute-user-id (file-attributes filename 'integer)))
 
 (defun crux-file-owned-by-user-p (filename)
   "Return t if file FILENAME is owned by the currently logged in user."
@@ -649,7 +649,7 @@ as the current user."
 (defun crux-insert-date ()
   "Insert a timestamp according to locale's date and time format."
   (interactive)
-  (insert (format-time-string "%c" (current-time))))
+  (insert (format-time-string "%c")))
 
 ;;;###autoload
 (defun crux-keyboard-quit-dwim ()
@@ -693,7 +693,7 @@ Enable `recentf-mode' if it isn't already."
     (when file
       (find-file file))))
 
-(define-obsolete-function-alias 'crux-recentf-ido-find-file 'crux-recentf-find-file "0.4.0")
+(define-obsolete-function-alias 'crux-recentf-ido-find-file #'crux-recentf-find-file "0.4.0")
 
 ;;;###autoload
 (defun crux-recentf-find-directory ()
@@ -714,7 +714,7 @@ into the other window, together with point, and stays selected."
       (window-swap-states this-win other-win)
       (select-window other-win))))
 
-(defalias 'crux-swap-windows 'crux-transpose-windows)
+(defalias 'crux-swap-windows #'crux-transpose-windows)
 
 ;;;###autoload
 (defun crux-switch-to-previous-buffer ()
@@ -808,8 +808,9 @@ the default directory of the current buffer.  If not found, create a new,
 empty buffer in the current buffer's default directory, or if there is no
 such directory, in the user's home directory."
   (interactive "P")
-  (let* ((prefix (if (eq system-type 'ms-dos) "_" "."))
-         (file (concat prefix (if find-2 "dir-locals-2" "dir-locals") ".el"))
+  (let* ((file (if find-2
+                   (concat (file-name-sans-extension dir-locals-file) "-2.el")
+                 dir-locals-file))
          (starting-dir (or (when (and default-directory
                                       (file-readable-p default-directory))
                              default-directory)
