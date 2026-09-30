@@ -61,6 +61,29 @@
       (expect command :to-equal
               (concat "open -a Preview " (shell-quote-argument "/tmp/my file.pdf"))))))
 
+(describe "crux-move-to-mode-line-start"
+  (it "skips org heading stars"
+    (with-temp-buffer
+      (org-mode)
+      (insert "** Heading")
+      (crux-move-to-mode-line-start)
+      (expect (current-column) :to-equal 3)))
+
+  (it "skips an eshell-style prompt using the mode's regexp"
+    (with-temp-buffer
+      (let ((crux-line-start-regex-alist
+             '((fundamental-mode . "^[^$\n]*\\$ ") (default . "^[[:space:]]*"))))
+        (insert "~/src $ ls")
+        (crux-move-to-mode-line-start)
+        (expect (current-column) :to-equal 8))))
+
+  (it "uses the default regexp for other modes"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (insert "  (foo)")
+      (crux-move-to-mode-line-start)
+      (expect (current-column) :to-equal 2))))
+
 ;;; Line editing
 
 (describe "crux-smart-open-line"
@@ -69,7 +92,22 @@
       (insert "first line")
       (goto-char (point-min))
       (crux-smart-open-line nil)
-      (expect (buffer-string) :to-match "first line\n"))))
+      (expect (buffer-string) :to-equal "first line\n")
+      (expect (point) :to-equal (point-max))))
+
+  (it "indents the new line according to the mode"
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (insert "(defun foo ()")
+      (crux-smart-open-line nil)
+      (expect (current-column) :to-equal 2)))
+
+  (it "opens a line above with a prefix argument"
+    (with-temp-buffer
+      (insert "first line")
+      (crux-smart-open-line t)
+      (expect (buffer-string) :to-equal "\nfirst line")
+      (expect (point) :to-equal (point-min)))))
 
 (describe "crux-smart-open-line-above"
   (it "opens a line above"
@@ -77,7 +115,16 @@
       (insert "first line")
       (goto-char (point-max))
       (crux-smart-open-line-above)
-      (expect (buffer-string) :to-match "\nfirst line"))))
+      (expect (buffer-string) :to-equal "\nfirst line")
+      (expect (point) :to-equal (point-min))))
+
+  (it "reuses the current line's indentation when electric-indent-inhibit is set"
+    (with-temp-buffer
+      (insert "    first line")
+      (setq-local electric-indent-inhibit t)
+      (crux-smart-open-line-above)
+      (expect (buffer-string) :to-equal "    \n    first line")
+      (expect (point) :to-equal 5))))
 
 (describe "crux-top-join-line"
   (it "joins current line with line below"
@@ -99,12 +146,13 @@
 (describe "crux-kill-line-backwards"
   (it "kills from point to beginning of line"
     (with-temp-buffer
-      (fundamental-mode)
-      (insert "hello world")
-      (goto-char 6) ; after "hello"
-      (crux-kill-line-backwards)
-      ;; indent-according-to-mode may adjust leading whitespace
-      (expect (buffer-string) :to-match "world"))))
+      (emacs-lisp-mode)
+      (insert "(foo\n  bar baz)")
+      (goto-char 12) ; before "baz"
+      (let ((last-command nil))
+        (crux-kill-line-backwards))
+      (expect (buffer-string) :to-equal "(foo\n baz)")
+      (expect (current-kill 0) :to-equal "  bar "))))
 
 (describe "crux-smart-kill-line"
   (it "kills to end of line when content remains"
@@ -522,8 +570,28 @@
       (expect (buffer-name) :to-equal "crux-renamed"))))
 
 (describe "crux-delete-file-and-buffer"
-  (it "has an interactive spec"
-    (expect (commandp #'crux-delete-file-and-buffer) :to-be t)))
+  :var (file buf)
+  (before-each
+    (setq file (make-temp-file "crux-test"))
+    (setq buf (find-file-noselect file)))
+  (after-each
+    (when (buffer-live-p buf) (kill-buffer buf))
+    (when (file-exists-p file) (delete-file file)))
+
+  (it "deletes the file and kills the buffer after confirmation"
+    (with-current-buffer buf
+      (cl-letf (((symbol-function 'y-or-n-p) (lambda (&rest _) t)))
+        (let ((delete-by-moving-to-trash nil))
+          (crux-delete-file-and-buffer))))
+    (expect (file-exists-p file) :to-be nil)
+    (expect (buffer-live-p buf) :to-be nil))
+
+  (it "keeps both when the user declines"
+    (with-current-buffer buf
+      (cl-letf (((symbol-function 'y-or-n-p) #'ignore))
+        (crux-delete-file-and-buffer)))
+    (expect (file-exists-p file) :to-be t)
+    (expect (buffer-live-p buf) :to-be t)))
 
 ;;; Root access
 
@@ -574,8 +642,14 @@
 ;;; Keyboard quit DWIM
 
 (describe "crux-keyboard-quit-dwim"
-  (it "is an interactive command"
-    (expect (commandp #'crux-keyboard-quit-dwim) :to-be t))
+  (it "closes the completions window when it's selected"
+    (let (closed)
+      (cl-letf (((symbol-function 'delete-completion-window)
+                 (lambda () (setq closed t))))
+        (with-temp-buffer
+          (completion-list-mode)
+          (crux-keyboard-quit-dwim)))
+      (expect closed :to-be t)))
 
   (it "deactivates an active region"
     (with-temp-buffer
@@ -694,8 +768,63 @@
 ;;; Copy file
 
 (describe "crux-copy-file-preserve-attributes"
-  (it "is an interactive command"
-    (expect (commandp #'crux-copy-file-preserve-attributes) :to-be t)))
+  :var (dir file buf)
+  (before-each
+    (setq dir (file-name-as-directory (make-temp-file "crux-test" t)))
+    (setq file (expand-file-name "orig.txt" dir))
+    (with-temp-file file (insert "content"))
+    (set-file-modes file #o600)
+    (setq buf (find-file-noselect file)))
+  (after-each
+    (kill-buffer buf)
+    (delete-directory dir t))
+
+  (defun crux-test--copy-to (dest &optional answer)
+    "Copy the test file to DEST, answering prompts with ANSWER."
+    (with-current-buffer buf
+      (cl-letf (((symbol-function 'read-file-name) (lambda (&rest _) dest))
+                ((symbol-function 'y-or-n-p) (lambda (&rest _) answer)))
+        (crux-copy-file-preserve-attributes nil))))
+
+  (it "copies the file, keeping its permissions"
+    (let ((dest (expand-file-name "copy.txt" dir)))
+      (crux-test--copy-to dest)
+      (expect (file-exists-p dest) :to-be t)
+      (expect (file-modes dest) :to-equal #o600)))
+
+  (it "copies into a directory when the destination ends with a slash"
+    (let ((subdir (file-name-as-directory (expand-file-name "sub" dir))))
+      (make-directory subdir)
+      (crux-test--copy-to subdir)
+      (expect (file-exists-p (expand-file-name "orig.txt" subdir)) :to-be t)))
+
+  (it "creates a missing directory after confirmation"
+    (let ((subdir (file-name-as-directory (expand-file-name "new" dir))))
+      (crux-test--copy-to subdir t)
+      (expect (file-exists-p (expand-file-name "orig.txt" subdir)) :to-be t)))
+
+  (it "does nothing when the user declines to create a directory"
+    (let ((subdir (file-name-as-directory (expand-file-name "new" dir))))
+      (crux-test--copy-to subdir nil)
+      (expect (file-exists-p subdir) :to-be nil)))
+
+  (it "doesn't overwrite an existing file unless confirmed"
+    (let ((dest (expand-file-name "existing.txt" dir)))
+      (with-temp-file dest (insert "old"))
+      (crux-test--copy-to dest nil)
+      (expect (with-temp-buffer (insert-file-contents dest) (buffer-string))
+              :to-equal "old"))))
+
+;;; Clipboard
+
+(describe "crux-indent-rigidly-and-copy-to-clipboard"
+  (it "copies the region indented by 4 columns by default, leaving the buffer alone"
+    (with-temp-buffer
+      (insert "foo\nbar\n")
+      (let ((last-command nil))
+        (crux-indent-rigidly-and-copy-to-clipboard (point-min) (point-max) nil))
+      (expect (current-kill 0) :to-equal "    foo\n    bar\n")
+      (expect (buffer-string) :to-equal "foo\nbar\n"))))
 
 ;;; Advice macros
 
