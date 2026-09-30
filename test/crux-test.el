@@ -699,33 +699,87 @@
 
 ;;; Advice macros
 
-(describe "crux-with-region-or-buffer"
-  (it "is a macro"
-    (expect (macrop 'crux-with-region-or-buffer) :to-be t))
+(defun crux-test--region-fn (beg end)
+  "Return the region between BEG and END, for testing the advice macros."
+  (interactive "r")
+  (list beg end))
 
-  (it "advises a function to operate on the entire buffer when no region is active"
-    (defun crux-test--buffer-fn (beg end)
-      (interactive "r")
-      (upcase-region beg end))
-    (crux-with-region-or-buffer crux-test--buffer-fn)
-    (with-temp-buffer
-      (insert "hello")
-      (goto-char (point-min))
-      ;; No active region — should operate on the whole buffer
-      (call-interactively #'crux-test--buffer-fn)
-      (expect (buffer-string) :to-equal "HELLO"))
-    (advice-remove #'crux-test--buffer-fn #'crux-crux-test--buffer-fn-region-or-buffer)))
+(defmacro crux-test--with-advice (macro &rest body)
+  "Evaluate BODY with `crux-test--region-fn' advised by MACRO."
+  (declare (indent 1))
+  `(let ((advices-before nil))
+     (advice-mapc (lambda (f _) (push f advices-before)) #'crux-test--region-fn)
+     (unwind-protect
+         (progn (,macro crux-test--region-fn) ,@body)
+       (advice-mapc (lambda (f _)
+                      (unless (memq f advices-before)
+                        (advice-remove #'crux-test--region-fn f)))
+                    #'crux-test--region-fn))))
+
+(describe "crux-with-region-or-buffer"
+  (it "names the advice after the function"
+    (crux-test--with-advice crux-with-region-or-buffer
+      (expect (advice-member-p #'crux-crux-test--region-fn-region-or-buffer
+                               #'crux-test--region-fn)
+              :to-be-truthy)))
+
+  (it "uses the whole buffer when no region is active"
+    (crux-test--with-advice crux-with-region-or-buffer
+      (with-temp-buffer
+        (insert "hello\nworld")
+        (goto-char 3)
+        (expect (call-interactively #'crux-test--region-fn)
+                :to-equal (list (point-min) (point-max))))))
+
+  (it "uses the region when it is active"
+    (crux-test--with-advice crux-with-region-or-buffer
+      (with-temp-buffer
+        (transient-mark-mode 1)
+        (insert "hello world")
+        (set-mark 2)
+        (goto-char 5)
+        (activate-mark)
+        (expect (call-interactively #'crux-test--region-fn) :to-equal '(2 5))))))
 
 (describe "crux-with-region-or-line"
-  (it "is a macro"
-    (expect (macrop 'crux-with-region-or-line) :to-be t)))
+  (it "uses the current line, including its newline, when no region is active"
+    (crux-test--with-advice crux-with-region-or-line
+      (with-temp-buffer
+        (insert "first\nsecond\nthird")
+        (goto-char 9)
+        (expect (call-interactively #'crux-test--region-fn) :to-equal '(7 14))))))
 
 (describe "crux-with-region-or-sexp-or-line"
-  (it "is a macro"
-    (expect (macrop 'crux-with-region-or-sexp-or-line) :to-be t)))
+  (it "uses the string around point"
+    (crux-test--with-advice crux-with-region-or-sexp-or-line
+      (with-temp-buffer
+        (emacs-lisp-mode)
+        (insert "(foo \"bar baz\" 1)")
+        (goto-char 9)
+        (expect (call-interactively #'crux-test--region-fn) :to-equal '(6 15)))))
+
+  (it "uses the list around point outside of strings"
+    (crux-test--with-advice crux-with-region-or-sexp-or-line
+      (with-temp-buffer
+        (emacs-lisp-mode)
+        (insert "x (foo bar) y")
+        (goto-char 5)
+        (expect (call-interactively #'crux-test--region-fn) :to-equal '(3 12)))))
+
+  (it "falls back to the current line when point isn't on a sexp"
+    (crux-test--with-advice crux-with-region-or-sexp-or-line
+      (with-temp-buffer
+        (emacs-lisp-mode)
+        (insert "foo bar\nbaz")
+        (goto-char 4)
+        (expect (call-interactively #'crux-test--region-fn) :to-equal '(1 9))))))
 
 (describe "crux-with-region-or-point-to-eol"
-  (it "is a macro"
-    (expect (macrop 'crux-with-region-or-point-to-eol) :to-be t)))
+  (it "uses the text from point to the end of the line"
+    (crux-test--with-advice crux-with-region-or-point-to-eol
+      (with-temp-buffer
+        (insert "hello world\nnext")
+        (goto-char 7)
+        (expect (call-interactively #'crux-test--region-fn) :to-equal '(7 12))))))
 
 ;;; crux-test.el ends here
