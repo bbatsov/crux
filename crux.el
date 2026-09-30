@@ -598,20 +598,41 @@ FILENAME defaults to `default-directory'."
          (or (member method '("sudo" "su" "ksu" "doas"))
              (equal (file-remote-p filename 'user) "root")))))
 
+(defun crux--sudo-hop-file-name (filename)
+  "Return remote FILENAME with an extra sudo hop on the same host.
+Used when `tramp-file-name-with-sudo' isn't available."
+  (let ((host (car (split-string (or (file-remote-p filename 'host) "") "#"))))
+    (format "%s|sudo:root@%s:%s"
+            (string-remove-suffix ":" (file-remote-p filename))
+            ;; IPv6 addresses need brackets; the port belongs to the outer hop only
+            (if (string-search ":" host) (format "[%s]" host) host)
+            (file-local-name filename))))
+
+(defvar tramp-file-name-with-method)
+
+(defun crux--local-root-method ()
+  "Return the TRAMP method for opening local files as root.
+Honor `tramp-file-name-with-method' when it's set to something other
+than its default, and otherwise use doas if it's available and sudo
+if it isn't."
+  (if (and (boundp 'tramp-file-name-with-method)
+           (not (equal tramp-file-name-with-method "sudo")))
+      tramp-file-name-with-method
+    (if (executable-find "doas") "doas" "sudo")))
+
 (defun crux--root-file-name (filename)
   "Return a TRAMP file name for editing FILENAME as root.
-Local files go through doas when it's available and sudo otherwise.
-Remote files get an extra sudo hop on the same host."
+Local files use the method from `crux--local-root-method'.  Remote
+files get an extra sudo hop on the same host, built by
+`tramp-file-name-with-sudo' when it's available (Emacs 30.1+)."
   (let ((filename (expand-file-name filename)))
-    (if-let* ((remote-prefix (file-remote-p filename)))
-        (format "%s|sudo:root@%s:%s"
-                (string-remove-suffix ":" remote-prefix)
-                ;; the port belongs to the outer hop only
-                (car (split-string (file-remote-p filename 'host) "#"))
-                (file-local-name filename))
-      (format "/%s:root@localhost:%s"
-              (if (executable-find "doas") "doas" "sudo")
-              filename))))
+    (cond
+     ((not (file-remote-p filename))
+      (format "/%s:root@localhost:%s" (crux--local-root-method) filename))
+     ((and (require 'tramp-cmds nil t)
+           (fboundp 'tramp-file-name-with-sudo))
+      (tramp-file-name-with-sudo filename))
+     (t (crux--sudo-hop-file-name filename)))))
 
 (defun crux-find-alternate-file-as-root (filename)
   "Wrap `find-alternate-file' to open FILENAME as root."

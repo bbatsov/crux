@@ -12,6 +12,8 @@
 (require 'crux)
 (require 'recentf)
 
+(defvar tramp-file-name-with-method)
+
 ;;; Movement
 
 (describe "crux-move-beginning-of-line"
@@ -632,14 +634,38 @@
               :to-equal (concat "/sudo:root@localhost:"
                                 (expand-file-name "~/notes.txt")))))
 
+  (it "honors a customized tramp-file-name-with-method"
+    (let ((tramp-file-name-with-method "run0"))
+      (expect (crux--root-file-name "/etc/hosts")
+              :to-equal "/run0:root@localhost:/etc/hosts")))
+
   (it "prefers doas when it's available"
     (cl-letf (((symbol-function 'executable-find) (lambda (cmd) (equal cmd "doas"))))
       (expect (crux--root-file-name "/etc/hosts")
               :to-equal "/doas:root@localhost:/etc/hosts")))
 
-  (it "adds a sudo hop for remote files, keeping user and port"
-    (expect (crux--root-file-name "/ssh:bob@example.com#2222:/etc/hosts")
-            :to-equal "/ssh:bob@example.com#2222|sudo:root@example.com:/etc/hosts")))
+  (it "hands remote files to tramp-file-name-with-sudo when it exists"
+    (require 'tramp-cmds)
+    (cl-letf (((symbol-function 'tramp-file-name-with-sudo)
+               (lambda (f) (concat "sudo-of:" f))))
+      (expect (crux--root-file-name "/ssh:bob@example.com:/etc/hosts")
+              :to-equal "sudo-of:/ssh:bob@example.com:/etc/hosts"))))
+
+(describe "crux--sudo-hop-file-name"
+  (it "adds a sudo hop, keeping user and port on the outer hop"
+    (expect (crux--sudo-hop-file-name "/ssh:bob@example.com#2222:/etc/hosts")
+            :to-equal "/ssh:bob@example.com#2222|sudo:root@example.com:/etc/hosts"))
+
+  (it "copes with remote file names without a host"
+    (expect (crux--sudo-hop-file-name "/adb::/sdcard/x")
+            :to-equal "/adb:|sudo:root@:/sdcard/x"))
+
+  (it "brackets IPv6 hosts"
+    (let ((file "/ssh:bob@[::1]#22:/etc/hosts"))
+      ;; older TRAMP versions spell the outer hop differently
+      (expect (crux--sudo-hop-file-name file)
+              :to-equal (concat (string-remove-suffix ":" (file-remote-p file))
+                                "|sudo:root@[::1]:/etc/hosts")))))
 
 (describe "crux-already-root-p"
   (it "is nil for local files"
