@@ -24,7 +24,9 @@ in crux on the [tags page](https://emacsredux.com/tags/#crux).
 
 ## Installation
 
-Available on all major `package.el` community maintained repos -
+crux requires Emacs 28.1 or newer.
+
+It's available on all major `package.el` community maintained repos -
 [MELPA Stable][] and [MELPA][] repos.
 
 MELPA Stable is recommended as it has the latest stable version.
@@ -63,10 +65,10 @@ individual commands to whatever keybindings you prefer.
 Command                                             | Suggested Keybinding(s)         | Description
 ----------------------------------------------------|---------------------------------|------------------------
 `crux-open-with`                                    | <kbd>C-c o</kbd>   | Open the currently visited file with an external program.
-`crux-smart-kill-line`                              | <kbd>C-k</kbd> or <kbd>Super-k</kbd> | First kill to end of line, then kill the whole line.
+`crux-smart-kill-line`                              | <kbd>C-k</kbd> | First kill to end of line, then kill the whole line.
 `crux-smart-open-line-above`                        | <kbd>C-S-RET</kbd> or <kbd>Super-o</kbd> | Insert an empty line above the current line and indent it properly.
-`crux-smart-open-line`                              | <kbd>S-RET</kbd> or <kbd>M-o</kbd> | Insert an empty line and indent it properly (as in most IDEs).
-`crux-cleanup-buffer-or-region`                     | <kbd>C-c n</kbd> | Fix indentation in buffer and strip whitespace.
+`crux-smart-open-line`                              | <kbd>S-RET</kbd> | Insert an empty line and indent it properly (as in most IDEs).
+`crux-cleanup-buffer-or-region`                     | <kbd>C-c n</kbd> | Fix indentation and strip whitespace in the region, or in the whole buffer.
 `crux-recentf-find-file`                            | <kbd>C-c f</kbd> or <kbd>Super-r</kbd> | Open recently visited file.
 `crux-recentf-find-directory`                       | <kbd>C-c F</kbd> | Open recently visited directory.
 `crux-view-url`                                     | <kbd>C-c u</kbd> | Open a new buffer containing the contents of URL.
@@ -80,7 +82,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-visit-term-buffer`                            | <kbd>C-c t</kbd> | Open a terminal emulator (`ansi-term`).
 `crux-visit-shell-buffer`                           | <kbd>C-c z</kbd> | Open a shell buffer (`eshell`).
 `crux-kill-other-buffers`                           | <kbd>C-c k</kbd> | Kill all open buffers except the one you're currently in.
-`crux-indent-defun`                                 | <kbd>C-M z</kbd> | Indent the definition at point.
+`crux-indent-defun`                                 | <kbd>C-M-z</kbd> | Indent the definition at point.
 `crux-indent-rigidly-and-copy-to-clipboard`         | <kbd>C-c TAB</kbd> | Indent and copy region to clipboard
 `crux-sudo-edit`                                    | <kbd>C-c s</kbd> | Edit currently visited file as root.
 `crux-find-user-init-file`                          | <kbd>C-c I</kbd> | Open user's init file.
@@ -90,7 +92,7 @@ Command                                             | Suggested Keybinding(s)   
 `crux-top-join-line`                                | <kbd>Super-j</kbd> or <kbd>C-^</kbd> | Join lines
 `crux-kill-whole-line`                              | <kbd>Super-k</kbd> | Kill whole line
 `crux-kill-line-backwards`                          | <kbd>C-Backspace</kbd> | Kill line backwards
-`crux-kill-and-join-forward`                        | <kbd>C-S-Backspace</kbd> or <kbd>C-k</kbd> | If at end of line, join with following; otherwise kill line.
+`crux-kill-and-join-forward`                        | <kbd>C-S-Backspace</kbd> | If at end of line, join with following; otherwise kill line.
 `crux-kill-buffer-truename`                         | <kbd>C-c P</kbd> | Kill absolute path of file visited in current buffer.
 `crux-ispell-word-then-abbrev`                      | <kbd>C-c i</kbd> | Fix word using `ispell` and then save to `abbrev`.
 `crux-upcase-region`                                | <kbd>C-x C-u</kbd> | `upcase-region` when `transient-mark-mode` is on and region is active.
@@ -99,8 +101,8 @@ Command                                             | Suggested Keybinding(s)   
 `crux-switch-to-previous-buffer`                    | <kbd>C-c b</kbd> | Switch to previously open buffer. Repeated calls toggle between the two most recent buffers.
 `crux-other-window-or-switch-buffer`                | <kbd>M-o</kbd>     | Select other window, or switch to most recent buffer if only one window.
 `crux-move-beginning-of-line`                       | <kbd>C-a</kbd>     | Move point to first non-whitespace character, or to the beginning of the line.
-`crux-insert-date`                                  | <kbd>C-c d t</kbd> | Insert a timestamp according to locale's date and time format.
-`crux-recompile-init`                               |                                 | Byte-compile all your Emacs init files.
+`crux-move-to-mode-line-start`                      |                    | Move to the start of the line's content, skipping prompts and markup like Org heading stars.
+`crux-insert-date`                                  | <kbd>C-c T</kbd> | Insert a timestamp according to locale's date and time format.
 `crux-create-scratch-buffer`                        |                                 | Create a new scratch buffer.
 `crux-keyboard-quit-dwim`                           | <kbd>C-g</kbd>     | Do-What-I-Mean `keyboard-quit`. Closes the minibuffer or completions buffer even without focusing it.
 
@@ -161,9 +163,52 @@ the current list (or string), or finally the current line:
 Sometimes you might want to act on the point until the end of the
 current line, rather than the whole line, in the absence of a region:
 
-``` el
+```el
 (crux-with-region-or-point-to-eol kill-ring-save)
 ```
+
+## Configuration
+
+Most commands work fine out of the box, but a few of them can be tuned
+via `M-x customize-group RET crux`:
+
+* `crux-move-visually` - when non-nil, the line start commands work on
+  visual lines instead of logical ones.
+* `crux-line-start-regex-alist` - per-mode regexps describing what
+  `crux-move-beginning-of-line` should skip at the start of a line
+  (shell prompts, Org heading stars and so on).
+* `crux-indent-sensitive-modes` and `crux-untabify-sensitive-modes` -
+  modes (and their derived modes) where `crux-cleanup-buffer-or-region`
+  won't reindent or untabify.
+* `crux-term-func` and `crux-shell-func` - how `crux-visit-term-buffer`
+  and `crux-visit-shell-buffer` start their buffers. `crux-shell` is
+  the shell program used by the default `crux-term-func`, and there's a
+  `crux-shell` function you can use for `crux-shell-func` if you prefer
+  `M-x shell` to Eshell.
+* `crux-shell-zsh-init-files`, `crux-shell-bash-init-files`,
+  `crux-shell-tcsh-init-files`, `crux-shell-fish-init-files` and
+  `crux-shell-ksh-init-files` - the files `crux-find-shell-init-file`
+  looks for.
+
+`crux-term-buffer-name` and `crux-shell-buffer-name` set the names of
+the terminal and shell buffers. They're safe to set in `.dir-locals.el`
+if you want a separate terminal per project.
+
+## Built-in alternatives
+
+Newer Emacs versions ship commands that overlap with some of crux's. If
+you're on a recent Emacs you might prefer them:
+
+crux command | Built-in alternative
+-------------|---------------------
+`crux-duplicate-current-line-or-region` | `duplicate-dwim` (Emacs 29.1)
+`crux-recentf-find-file` | `recentf-open` (Emacs 29.1)
+`crux-rename-file-and-buffer` | `rename-visited-file` (Emacs 29.1), though it doesn't go through VC
+`crux-sudo-edit` | `tramp-revert-buffer-with-sudo` (Emacs 30.1)
+`crux-open-with` (in Dired) | `dired-do-open` (Emacs 30.1)
+`crux-indent-defun` | `prog-fill-reindent-defun` on <kbd>M-q</kbd> (Emacs 30.1)
+`crux-switch-to-previous-buffer` | `mode-line-other-buffer`
+`crux-upcase-region` and friends | `upcase-dwim`, `downcase-dwim` and `capitalize-dwim`, which fall back to the word at point instead of doing nothing
 
 ## Minor modes
 
@@ -180,11 +225,11 @@ Copyright © 2015-2025 Bozhidar Batsov and [contributors][].
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
 [badge-license]: https://img.shields.io/badge/license-GPL_3-green.svg
-[melpa-badge]: http://melpa.org/packages/crux-badge.svg
-[melpa-stable-badge]: http://stable.melpa.org/packages/crux-badge.svg
-[melpa-package]: http://melpa.org/#/crux
-[melpa-stable-package]: http://stable.melpa.org/#/crux
-[COPYING]: http://www.gnu.org/copyleft/gpl.html
+[melpa-badge]: https://melpa.org/packages/crux-badge.svg
+[melpa-stable-badge]: https://stable.melpa.org/packages/crux-badge.svg
+[melpa-package]: https://melpa.org/#/crux
+[melpa-stable-package]: https://stable.melpa.org/#/crux
+[COPYING]: https://www.gnu.org/copyleft/gpl.html
 [contributors]: https://github.com/bbatsov/crux/contributors
-[melpa]: http://melpa.org
-[melpa stable]: http://stable.melpa.org
+[melpa]: https://melpa.org
+[melpa stable]: https://stable.melpa.org
