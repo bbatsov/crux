@@ -701,19 +701,18 @@ Enable `recentf-mode' if it isn't already."
   (interactive)
   (crux-recentf-find-file (lambda (file) (abbreviate-file-name (file-name-directory file)))))
 
-;; modified from https://www.emacswiki.org/emacs/TransposeWindows
 ;;;###autoload
 (defun crux-transpose-windows (arg)
-  "Transpose the buffers shown in two windows.
-Prefix ARG determines if the current window's buffer is swapped
-with the next or previous window, and the number of
-transpositions to execute in sequence."
+  "Swap the current window with another one.
+The other window is the one `other-window' would select with ARG, so
+a negative ARG swaps with a previous window.  The current buffer moves
+into the other window, together with point, and stays selected."
   (interactive "p")
-  (let ((this-win (selected-window))
-        (this-buffer (window-buffer)))
+  (let ((this-win (selected-window)))
     (other-window arg)
-    (set-window-buffer this-win (current-buffer))
-    (set-window-buffer (selected-window) this-buffer)))
+    (let ((other-win (selected-window)))
+      (window-swap-states this-win other-win)
+      (select-window other-win))))
 
 (defalias 'crux-swap-windows 'crux-transpose-windows)
 
