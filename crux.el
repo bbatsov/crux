@@ -167,6 +167,9 @@ The default value of `crux-shell-func'."
 An alternative value for `crux-shell-func'."
   (shell (format "*%s*" buffer-name)))
 
+;; TODO: When Emacs 30.1 is the minimum, open files from Dired with
+;; `dired-do-open', which also handles marked files.  On 31.1+
+;; `shell-command-do-open' could replace the per-OS program lookup.
 ;;;###autoload
 (defun crux-open-with (arg)
   "Open visited file in default external program.
@@ -376,6 +379,8 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
+;; TODO: When Emacs 30.1 is the minimum, consider making this obsolete in
+;; favor of `prog-fill-reindent-defun' (bound to M-q in `prog-mode').
 ;;;###autoload
 (defun crux-indent-defun ()
   "Indent the current defun."
@@ -422,6 +427,9 @@ up in the last copy, at the same relative position."
         (insert "\n" text))
       (goto-char (+ (- (point) (length text)) offset)))))
 
+;; TODO: When Emacs 29.1 is the minimum, make this obsolete in favor of
+;; `duplicate-dwim'.  The comment variant below has no upstream
+;; counterpart, so it stays.
 ;;;###autoload
 (defun crux-duplicate-current-line-or-region (arg)
   "Duplicate the current line or region ARG times.
@@ -438,6 +446,8 @@ there's a region, all lines that region covers will be duplicated."
   (interactive "p")
   (crux--duplicate-line-or-region arg t))
 
+;; TODO: When Emacs 29.1 is the minimum, consider building on
+;; `rename-visited-file', keeping only the VC handling on top of it.
 ;;;###autoload
 (defun crux-rename-file-and-buffer ()
   "Rename the current buffer and the file it is visiting.
@@ -554,6 +564,8 @@ the respective step."
   (let* ((region (use-region-p))
          (beg (if region (region-beginning) (point-min)))
          (end (copy-marker (if region (region-end) (point-max)))))
+    ;; TODO: When Emacs 30.1 is the minimum, pass the lists straight to
+    ;; `derived-mode-p', which accepts a list of modes there.
     (unless (seq-some #'derived-mode-p crux-untabify-sensitive-modes)
       (untabify beg end))
     (unless (seq-some #'derived-mode-p crux-indent-sensitive-modes)
@@ -601,6 +613,8 @@ FILENAME defaults to `default-directory'."
          (or (member method '("sudo" "su" "ksu" "doas"))
              (equal (file-remote-p filename 'user) "root")))))
 
+;; TODO: When Emacs 30.1 is the minimum, drop this fallback, as
+;; `tramp-file-name-with-sudo' is always available.
 (defun crux--sudo-hop-file-name (filename)
   "Return remote FILENAME with an extra sudo hop on the same host.
 Used when `tramp-file-name-with-sudo' isn't available."
@@ -613,6 +627,9 @@ Used when `tramp-file-name-with-sudo' isn't available."
 
 (defvar tramp-file-name-with-method)
 
+;; TODO: When Emacs 30.1 is the minimum, consider dropping the doas
+;; detection and pointing doas users at `tramp-file-name-with-method',
+;; so that local files can go through `tramp-file-name-with-sudo' too.
 (defun crux--local-root-method ()
   "Return the TRAMP method for opening local files as root.
 Honor `tramp-file-name-with-method' when it's set to something other
@@ -745,6 +762,9 @@ The DWIM behaviour of this command is as follows:
    (t
     (keyboard-quit))))
 
+;; TODO: When Emacs 29.1 is the minimum, make this obsolete in favor of
+;; `recentf-open'.  `crux-recentf-find-directory' has no upstream
+;; counterpart, so it would need its own completion code.
 ;;;###autoload
 (defun crux-recentf-find-file (&optional filter)
   "Find a recent file using `completing-read'.
