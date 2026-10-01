@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 0.6.0 (2026-10-01)
+
 ### New features
 
 * [#101](https://github.com/bbatsov/crux/pull/101): Add `crux-find-current-directory-dir-locals-file`.
