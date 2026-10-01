@@ -5,11 +5,12 @@
 ### New features
 
 * [#101](https://github.com/bbatsov/crux/pull/101): Add `crux-find-current-directory-dir-locals-file`.
-* Add `crux-keyboard-quit-dwim`.
+* [#104](https://github.com/bbatsov/crux/pull/104): Add `crux-keyboard-quit-dwim`.
 
 ### Changes
 
 * [#110](https://github.com/bbatsov/crux/pull/110): Require Emacs 28.1.
+* The `crux-with-region-or-*` macros use `advice-add` instead of `defadvice`, which was removed in Emacs 31.
 * [#110](https://github.com/bbatsov/crux/pull/110): Don't load TRAMP when crux is loaded.
 * [#110](https://github.com/bbatsov/crux/pull/110): Mark `crux-recompile-init` as obsolete.
 * [#110](https://github.com/bbatsov/crux/pull/110): The `crux-with-region-or-*` macros and the line duplication commands check `use-region-p`, so an empty region, or any region with Transient Mark mode off, no longer counts as active.
@@ -21,7 +22,7 @@
 
 ### Bugs fixed
 
-* Create nonexistent parent directories in `crux-copy-file-preserve-attributes`.
+* [#102](https://github.com/bbatsov/crux/pull/102): Create nonexistent parent directories in `crux-copy-file-preserve-attributes`.
 * [#110](https://github.com/bbatsov/crux/pull/110): Fix byte-compilation on Emacs 31.
 * [#110](https://github.com/bbatsov/crux/pull/110): Fix `crux-cleanup-buffer-or-region` erroring or cleaning the wrong text unless `untabify` and `indent-region` had been advised with `crux-with-region-or-buffer`.
 * [#110](https://github.com/bbatsov/crux/pull/110): Fix `crux-rename-file-and-buffer` renaming remote version-controlled files to their old name, renaming after the user declined to save, and ignoring buffers without a file.
