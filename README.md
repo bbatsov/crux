@@ -220,7 +220,7 @@ automatically opened as root.
 
 ## License
 
-Copyright © 2015-2025 Bozhidar Batsov and [contributors][].
+Copyright © 2015-2026 Bozhidar Batsov and [contributors][].
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 

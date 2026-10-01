@@ -1,6 +1,6 @@
 ;;; crux-test.el --- Tests for crux -*- lexical-binding: t; -*-
 
-;; Copyright © 2015-2025 Bozhidar Batsov
+;; Copyright © 2015-2026 Bozhidar Batsov
 
 ;;; Commentary:
 
