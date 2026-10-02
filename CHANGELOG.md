@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* [#112](https://github.com/bbatsov/crux/issues/112): Don't ship the test suite in the NonGNU ELPA package, where byte-compiling it on install failed because Buttercup isn't available.
+
 ## 0.6.0 (2026-10-01)
 
 ### New features

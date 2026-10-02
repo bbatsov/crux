@@ -1,5 +1,5 @@
-test/
+test
 Eldev
-.eldev/
-.github/
+.eldev
+.github
 CONTRIBUTING.md
